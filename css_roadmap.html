@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Spec Mastery Guide — Newton School of Tech</title>
+<style>
+  :root {
+    --blue: #1a56db;
+    --navy: #1e3a5f;
+    --teal: #0d9488;
+    --amber: #d97706;
+    --red: #dc2626;
+    --green: #16a34a;
+    --purple: #7c3aed;
+    --gray: #64748b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.7;
+  }
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1a56db 60%, #0d9488 100%);
+    color: white;
+    padding: 48px 40px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+  .hero p { font-size: 1.05rem; opacity: 0.85; max-width: 700px; }
+  .hero-meta { margin-top: 20px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .hero-meta span {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  /* LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  /* TOC */
+  .toc {
+    background: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    border: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .toc h2 { color: var(--navy); margin-bottom: 16px; font-size: 1.1rem; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .toc a {
+    display: block;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: #eff6ff; border-color: var(--blue); }
+  .toc a .num { color: var(--gray); margin-right: 6px; }
+  /* SECTIONS */
+  .section {
+    background: white;
+    border-radius: 12px;
+    padding: 36px 40px;
+    border: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    width: 44px; height: 44px;
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .section h2 { font-size: 1.45rem; color: var(--navy); }
+  .section h3 { font-size: 1.1rem; color: var(--navy); margin: 24px 0 12px; }
+  .section h4 { font-size: 0.95rem; color: var(--gray); font-weight: 600; margin: 16px 0 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .section p { margin-bottom: 14px; color: #334155; }
+  /* CALLOUTS */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    border-left: 4px solid;
+    line-height: 1.6;
+  }
+  .callout.info { background: #eff6ff; border-color: var(--blue); color: #1e40af; }
+  .callout.warn { background: #fffbeb; border-color: var(--amber); color: #92400e; }
+  .callout.tip { background: #f0fdf4; border-color: var(--green); color: #14532d; }
+  .callout.danger { background: #fef2f2; border-color: var(--red); color: #991b1b; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; }
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead tr { background: var(--navy); color: white; }
+  thead th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 13px; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  /* FLOWCHART */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 24px 0;
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .flow-box {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    font-size: 13px;
+    min-width: 90px;
+    position: relative;
+  }
+  .flow-box.active { border-color: var(--blue); background: #eff6ff; }
+  .flow-box .label { font-weight: 700; font-size: 14px; color: var(--navy); }
+  .flow-box .sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .flow-box.fpwd { border-color: #94a3b8; }
+  .flow-box.wd { border-color: var(--amber); background: #fffbeb; }
+  .flow-box.cr { border-color: var(--teal); background: #f0fdfa; }
+  .flow-box.pr { border-color: var(--purple); background: #faf5ff; }
+  .flow-box.rec { border-color: var(--green); background: #f0fdf4; }
+  .flow-arrow {
+    font-size: 22px;
+    color: var(--gray);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+  /* ROADMAP */
+  .roadmap { position: relative; padding-left: 32px; }
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 11px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--blue), var(--teal));
+    border-radius: 2px;
+  }
+  .rm-phase { margin-bottom: 32px; position: relative; }
+  .rm-dot {
+    position: absolute;
+    left: -28px; top: 4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: white;
+    box-shadow: 0 0 0 3px white;
+  }
+  .rm-phase-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .rm-phase-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .rm-items { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rm-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #334155;
+  }
+  /* MODULE GRID */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .module-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    border-top: 4px solid;
+  }
+  .module-card .mc-title { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 4px; }
+  .module-card .mc-url { font-size: 11px; color: var(--blue); font-family: monospace; margin-bottom: 8px; word-break: break-all; }
+  .module-card .mc-desc { font-size: 13px; color: var(--gray); }
+  .mc-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    float: right;
+    margin-top: 2px;
+  }
+  /* CODE */
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--navy);
+  }
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin: 14px 0;
+  }
+  pre .c { color: #64748b; }
+  pre .k { color: #7dd3fc; }
+  pre .p { color: #86efac; }
+  pre .v { color: #fca5a5; }
+  pre .s { color: #fde68a; }
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .badge-fpwd { background: #e2e8f0; color: #475569; }
+  .badge-wd { background: #fef3c7; color: #92400e; }
+  .badge-cr { background: #ccfbf1; color: #134e4a; }
+  .badge-pr { background: #ede9fe; color: #4c1d95; }
+  .badge-rec { background: #dcfce7; color: #14532d; }
+  .badge-ed { background: #fce7f3; color: #831843; }
+  /* ANATOMY */
+  .anatomy {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-family: 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    line-height: 2;
+    margin: 16px 0;
+    position: relative;
+  }
+  .anatomy .ann {
+    position: relative;
+    display: inline-block;
+  }
+  .hl-yellow { color: #fde68a; font-weight: 700; }
+  .hl-blue { color: #7dd3fc; font-weight: 700; }
+  .hl-green { color: #86efac; font-weight: 700; }
+  .hl-red { color: #fca5a5; font-weight: 700; }
+  .hl-pink { color: #f9a8d4; font-weight: 700; }
+  .hl-purple { color: #c4b5fd; font-weight: 700; }
+  .hl-orange { color: #fdba74; font-weight: 700; }
+  /* STEP */
+  .steps { counter-reset: steps; }
+  .step {
+    counter-increment: steps;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--blue);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-body h4 { font-size: 0.95rem; color: var(--navy); margin-bottom: 6px; font-weight: 700; }
+  .step-body p { margin: 0; color: #475569; font-size: 14px; }
+  /* GRAMMAR BOX */
+  .grammar {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 13.5px;
+  }
+  .grammar-row { display: flex; gap: 12px; margin: 4px 0; align-items: baseline; }
+  .grammar-sym { font-family: monospace; font-size: 15px; font-weight: 700; color: var(--red); min-width: 30px; }
+  .grammar-def { color: #475569; }
+  /* QUICK REF */
+  .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+  .qr-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    background: white;
+  }
+  .qr-card .qr-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); margin-bottom: 6px; }
+  .qr-card .qr-val { font-size: 14px; color: var(--navy); font-weight: 600; }
+  .qr-card .qr-note { font-size: 12px; color: var(--gray); margin-top: 4px; }
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 1.7rem; }
+    .section { padding: 24px 20px; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+    .anatomy { font-size: 11px; padding: 16px; }
+  }
+  /* PRINT */
+  @media print {
+    body { background: white; }
+    .section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Newton School of Tech · Instructor Training</div>
+  <h1>CSS Specification Mastery Guide</h1>
+  <p>How to read, navigate, and extract deep knowledge from the W3C CSS specifications — from beginner orientation to expert-level fluency. Everything fact-checked against official sources.</p>
+  <div class="hero-meta">
+    <span>📚 Source: w3.org/Style/CSS</span>
+    <span>✅ Accuracy-first, no fluff</span>
+    <span>🗺️ Full roadmap included</span>
+    <span>📊 Visual aids throughout</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📋 Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#s1"><span class="num">01</span> What are CSS Specs?</a>
+    <a href="#s2"><span class="num">02</span> W3C Process & Maturity Levels</a>
+    <a href="#s3"><span class="num">03</span> Modules vs Levels Explained</a>
+    <a href="#s4"><span class="num">04</span> Navigating current-work</a>
+    <a href="#s5"><span class="num">05</span> Anatomy of a Spec Page</a>
+    <a href="#s6"><span class="num">06</span> Reading the Formal Grammar</a>
+    <a href="#s7"><span class="num">07</span> Key Module Directory</a>
+    <a href="#s8"><span class="num">08</span> Tools & Companion Resources</a>
+    <a href="#s9"><span class="num">09</span> Beginner → Mastery Roadmap</a>
+    <a href="#s10"><span class="num">10</span> Quick Reference Cheatsheet</a>
+  </div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <h2>What Are CSS Specifications & Why Read Them?</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">The authoritative source — not MDN, not blogs</p>
+    </div>
+  </div>
+
+  <p>A <strong>CSS specification</strong> is the formal document that defines how CSS must behave. Browser engineers (Chrome/V8, Firefox/Gecko, Safari/WebKit) implement these specs. If there's a conflict between MDN and a spec, the spec is always correct — MDN may have a lag or an error.</p>
+
+  <div class="callout info">
+    <strong>📌 Official Source</strong>
+    The canonical home for all CSS specs is <code>https://www.w3.org/Style/CSS/</code>. The live index of all work-in-progress and completed specs is at <code>https://www.w3.org/Style/CSS/current-work</code>. This page is maintained by the CSS Working Group (CSSWG) itself.
+  </div>
+
+  <h3>Who Writes CSS Specs?</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Entity</th><th>Role</th><th>Where to Find</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CSS Working Group (CSSWG)</strong></td><td>The actual standards body — includes engineers from Apple, Google, Mozilla, Microsoft, Adobe, etc.</td><td><code>w3.org/Style/CSS/members</code></td></tr>
+        <tr><td><strong>Spec Editors</strong></td><td>Individuals (e.g., Elika Etemad / fantasai, Tab Atkins, Lea Verou) who write and maintain individual modules</td><td>Listed in "Editors" section of each spec</td></tr>
+        <tr><td><strong>W3C Process</strong></td><td>The governance framework that moves specs from draft → recommendation</td><td><code>w3.org/2020/Process</code></td></tr>
+        <tr><td><strong>GitHub CSSWG</strong></td><td>All drafts and live issue tracking</td><td><code>github.com/w3c/csswg-drafts</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Spec vs MDN vs CSS-Tricks</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Source</th><th>What it is</th><th>Trust for</th><th>Don't rely on it for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>W3C Spec</strong></td><td>Formal definition</td><td>Exact behavior, edge cases, formal syntax</td><td>Quick readable learning</td></tr>
+        <tr><td><strong>MDN Web Docs</strong></td><td>Community documentation</td><td>Browser compat tables, quick usage examples</td><td>Edge-case correctness (can lag behind spec)</td></tr>
+        <tr><td><strong>CSS-Tricks / blogs</strong></td><td>Tutorials</td><td>Mental models, visual demos</td><td>Authoritative correctness</td></tr>
+        <tr><td><strong>Editor's Draft</strong></td><td>Live in-progress draft</td><td>Latest changes before official publication</td><td>Stable features (may change tomorrow)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <strong>⚠️ Important Clarification</strong>
+    "CSS3" is not a version — it's a collective marketing name. There is no "CSS4." CSS has moved to a modular system where individual modules each have their own version numbers (Level 1, 2, 3…). This is by design, so fast-moving modules (like Grid) don't block slow ones.
+  </div>
+</div>
+
+<!-- SECTION 2 -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <h2>W3C Process & Spec Maturity Levels</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">How a CSS feature goes from idea → web standard</p>
+    </div>
+  </div>
+
+  <p>Every spec on the CSSWG current-work page has a status code. Understanding these is essential — they tell you whether a feature is safe to use in production or is still experimental.</p>
+
+  <!-- MATURITY FLOW -->
+  <h3>The W3C Recommendation Track (Pipeline)</h3>
+  <div class="flow">
+    <div class="flow-box">
+      <div class="label">💡 Idea</div>
+      <div class="sub">GitHub issue / proposal</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box fpwd">
+      <div class="label">FPWD</div>
+      <div class="sub">First Public WD</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box wd">
+      <div class="label">WD</div>
+      <div class="sub">Working Draft</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box cr">
+      <div class="label">CR</div>
+      <div class="sub">Candidate Rec.</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box pr">
+      <div class="label">PR</div>
+      <div class="sub">Proposed Rec.</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box rec">
+      <div class="label">REC</div>
+      <div class="sub">Recommendation</div>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:12px;color:var(--gray);margin-top:-8px">⚠️ Specs can also move <em>backwards</em> (e.g., CR → WD) if serious issues are found. Source: <a href="https://fantasai.inkedblade.net/weblog/2011/inside-csswg/process">fantasai.inkedblade.net</a></p>
+
+  <div class="table-wrap" style="margin-top:24px">
+    <table>
+      <thead><tr><th>Abbreviation</th><th>Full Name</th><th>Phase</th><th>Production Safe?</th><th>What Happens Here</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-ed">ED</span></td>
+          <td>Editor's Draft</td>
+          <td>Pre-publication</td>
+          <td>❌ No</td>
+          <td>Live working copy by the editor. May be inconsistent. Usually most up-to-date. Hosted at <code>drafts.csswg.org</code></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-fpwd">FPWD</span></td>
+          <td>First Public Working Draft</td>
+          <td>Design</td>
+          <td>❌ No</td>
+          <td>WG has agreed to work on this module. Very early — features may be dropped entirely.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-wd">WD</span></td>
+          <td>Working Draft</td>
+          <td>Design (iterating)</td>
+          <td>⚠️ Caution</td>
+          <td>Community review phase. Open to major changes. "Use with caution" per CSS-Tricks / Tab Atkins.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-cr">CR</span></td>
+          <td>Candidate Recommendation</td>
+          <td>Testing</td>
+          <td>✅ Generally Yes</td>
+          <td>Spec is feature-complete. WG collects implementation reports. Requires 2 independent correct browser implementations to exit. W3C recommends use starts here.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-pr">PR</span></td>
+          <td>Proposed Recommendation</td>
+          <td>Advisory vote</td>
+          <td>✅ Yes</td>
+          <td>W3C Advisory Committee votes. Brief formal step before finalization.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-rec">REC</span></td>
+          <td>Recommendation</td>
+          <td>Maintenance</td>
+          <td>✅ Yes (but verify)</td>
+          <td>Official W3C Standard. Ironically, browsers implement at CR stage — by the time it's REC, the feature may be old. Only errata updates happen here. Tab Atkins has noted RECs can accumulate unfixed errors.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <strong>💡 Key Insight (verified from W3C CSS Snapshot)</strong>
+    W3C explicitly states: <em>"W3C encourages everyday use starting from CR."</em> This is your practical threshold — if a feature is in CR with wide browser support, use it. Don't wait for REC.
+  </div>
+
+  <h3>Editor's Draft vs Published Draft — Which to Read?</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>URL Pattern</th><th>Type</th><th>Use When</th></tr></thead>
+      <tbody>
+        <tr><td><code>https://drafts.csswg.org/css-grid/</code></td><td>Editor's Draft (ED)</td><td>You want the absolute latest, including unresolved issues. Best for tracking upcoming changes.</td></tr>
+        <tr><td><code>https://www.w3.org/TR/css-grid-1/</code></td><td>Published Draft (WD/CR/REC)</td><td>You want the officially published, stable reference. What browsers implement against.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Rule of thumb:</strong> For learning, use the <code>w3.org/TR/</code> version. For tracking the bleeding edge, monitor <code>drafts.csswg.org</code>.</p>
+</div>
+
+<!-- SECTION 3 -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <h2>Modules vs Levels — The Modular Architecture of CSS</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">Why there's no single CSS3 spec file</p>
+    </div>
+  </div>
+
+  <p>Before CSS3, everything was in one giant document. This was a bottleneck — the whole spec had to advance together. The CSSWG fixed this by splitting CSS into <strong>independent modules</strong>, each advancing at its own pace.</p>
+
+  <h3>Modules</h3>
+  <p>Each module covers a specific area of CSS. Examples: <em>CSS Flexbox Module Level 1</em>, <em>CSS Grid Layout Module Level 2</em>, <em>CSS Color Level 5</em>. You can think of a module as a chapter in a book, except each chapter gets published and versioned independently.</p>
+
+  <h3>Levels</h3>
+  <p>A "level" is a module's version number — but levels don't just add features, they <em>supersede and extend</em> previous levels.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>Means</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Level 1</td><td>First specification for this topic, sometimes corresponding to CSS1 era.</td><td>CSS Selectors Level 1 = original CSS1 selectors</td></tr>
+        <tr><td>Level 2</td><td>Extends Level 1. Redefines and adds features.</td><td>CSS Selectors Level 2 = added attribute selectors</td></tr>
+        <tr><td>Level 3</td><td>Extends Level 2 (or starts fresh if no prior level covered this topic).</td><td>CSS Selectors Level 3 = added :nth-child(), :not(), etc.</td></tr>
+        <tr><td>Level 4</td><td>Latest iteration; some Level 4 features are already shipping in browsers.</td><td>CSS Selectors Level 4 = :is(), :where(), :has()</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout info">
+    <strong>📌 Verified Fact</strong>
+    Some modules start at Level 3 if they extend something that was in CSS2.1 (e.g., "Backgrounds and Borders Level 3" — there's no Level 1 or 2 because borders were part of the monolithic CSS2.1 spec). Source: <a href="https://russmaxdesign.github.io/maxdesign-slides/02-css/201-levels-of-css.html">Russ Max Design</a> / W3C CSS specs page.
+  </div>
+
+  <h3>CSS Snapshots</h3>
+  <p>Because modules advance separately, it can be hard to know "what is CSS right now?" That's what <strong>CSS Snapshots</strong> are for. The snapshot lists all modules that are stable enough to be considered the current state of CSS. The latest is <strong>CSS Snapshot 2025</strong> at <code>https://www.w3.org/TR/css-2025/</code>.</p>
+
+  <div class="callout tip">
+    <strong>💡 Pro Tip</strong>
+    When someone asks "does this property exist in CSS?" the best authoritative check is the <strong>CSS Snapshot properties index</strong> at <code>https://www.w3.org/TR/css/#properties</code>. This lists every stable property with its module source.
+  </div>
+
+  <!-- Visual module relationships -->
+  <h3>Visual: How CSS2.1 → Modular CSS works</h3>
+  <div class="flow" style="flex-direction:column;gap:12px;">
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <div class="flow-box rec" style="background:#dcfce7"><span class="label">CSS2.1 (REC)</span><div class="sub">The monolithic core — still valid</div></div>
+    </div>
+    <div class="flow-arrow" style="font-size:14px;color:var(--gray)">▼ split into modules + extended by</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <div class="flow-box cr" style="min-width:120px"><span class="label">Selectors L4</span></div>
+      <div class="flow-box cr" style="min-width:120px"><span class="label">Flexbox L1</span></div>
+      <div class="flow-box cr" style="min-width:120px"><span class="label">Grid L2</span></div>
+      <div class="flow-box cr" style="min-width:120px"><span class="label">Color L5</span></div>
+      <div class="flow-box wd" style="min-width:120px"><span class="label">Scroll Snap L2</span></div>
+      <div class="flow-box wd" style="min-width:120px"><span class="label">Nesting L1</span></div>
+      <div style="color:var(--gray);display:flex;align-items:center;font-size:13px;">+ 60+ more modules</div>
+    </div>
+    <div class="flow-arrow" style="font-size:14px;color:var(--gray)">▼ collected into</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <div class="flow-box rec" style="background:#dcfce7"><span class="label">CSS Snapshot 2025</span><div class="sub">Stable combined reference</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <h2>Navigating the current-work Page Like a Pro</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">Your command center: w3.org/Style/CSS/current-work</p>
+    </div>
+  </div>
+
+  <p>The current-work page is the master index. It lists every CSS module with its status. Knowing how to read it efficiently saves hours.</p>
+
+  <h3>Page Structure</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Stability Groups</h4>
+        <p>Modules are sorted by stability: <em>Completed → Current → Upcoming</em>. Start with "Current" for anything production-relevant. "Upcoming" is experimental territory.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Status Column</h4>
+        <p>Shows FPWD / WD / CR / PR / REC for each module. Cross-reference with Section 2 of this guide to know if it's production-safe.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Notes Column</h4>
+        <p>Often has critical annotations like "replaces CSS2.1 Chapter X" or "superseded by Level 4." Always read this before assuming you're reading the most current version of a module.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>ℹ️ Icon Column</h4>
+        <p>Links to the editors' draft at <code>drafts.csswg.org</code> for the live in-progress version. Click this when you want to see changes not yet officially published.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Atom Feed</h4>
+        <p>Subscribe to <code>w3.org/Style/CSS/current-work.atom</code> in any RSS reader to get notified when specs are updated. This is how spec-watchers stay current.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Related Tools Linked from current-work</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Resource</th><th>URL</th><th>Use For</th></tr></thead>
+      <tbody>
+        <tr><td>All properties (A–Z)</td><td><code>drafts.csswg.org/indexes/#properties</code></td><td>Finding which module defines a specific property</td></tr>
+        <tr><td>CSS Snapshot 2025</td><td><code>w3.org/TR/css-2025/</code></td><td>Stable CSS reference — what's officially "CSS" right now</td></tr>
+        <tr><td>Web Platform Tests</td><td><code>wpt.fyi/results/css</code></td><td>Browser conformance test results per feature</td></tr>
+        <tr><td>CSSWG GitHub</td><td><code>github.com/w3c/csswg-drafts</code></td><td>All module drafts, open issues, meeting resolutions</td></tr>
+        <tr><td>CSSWG Blog</td><td><code>w3.org/blog/CSS</code></td><td>Meeting minutes, announcements, WG decisions</td></tr>
+        <tr><td>CSS All Specs</td><td><code>w3.org/Style/CSS/specs.en.html</code></td><td>Narrative descriptions of every module</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 5 -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <h2>Anatomy of a CSS Spec Page</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">Every section decoded — read any spec confidently</p>
+    </div>
+  </div>
+
+  <p>Every CSS spec follows a predictable structure. Once you know what each part does, you can zero in on what you need without reading everything linearly.</p>
+
+  <!-- ANATOMY DIAGRAM -->
+  <div class="anatomy">
+<span class="hl-yellow">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="hl-yellow">  CSS Grid Layout Module Level 2   [Status: CR]</span>
+<span class="hl-yellow">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="hl-blue">  Abstract</span>              ← ONE-PARAGRAPH SUMMARY: What this module does.
+                           Read this FIRST to verify you're in the right spec.
+
+<span class="hl-green">  Status of this Document</span> ← CRITICAL: Current maturity level, publication date,
+                           how to file issues, links to previous version.
+
+<span class="hl-pink">  Table of Contents</span>     ← Your navigation map. Skim this before diving in.
+
+<span class="hl-orange">  1. Introduction</span>       ← Non-normative overview. Safe to skim.
+                           "Non-normative" = informational, not binding on browsers.
+
+<span class="hl-red">  2–N. Core Chapters</span>    ← NORMATIVE: "must", "must not", "should" = binding.
+                           This is the spec proper. Read carefully.
+
+<span class="hl-purple">  Appendix: Grammar</span>     ← Formal syntax definitions. Essential for understanding
+                           exactly what values a property accepts.
+
+<span class="hl-blue">  Appendix: Changes</span>     ← What changed from the previous level/draft.
+                           Start here if you've read an earlier version.
+
+<span class="hl-green">  Appendix: Acknowledgments / References</span>  ← Skip unless researching
+  </div>
+
+  <h3>Key Terms Inside a Spec</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Term / Keyword</th><th>Meaning</th><th>Implication</th></tr></thead>
+      <tbody>
+        <tr><td><code>must</code> / <code>must not</code></td><td>Absolute requirement</td><td>Browsers MUST implement this exactly or they are non-conformant</td></tr>
+        <tr><td><code>should</code> / <code>should not</code></td><td>Strong recommendation</td><td>Browsers ought to do this; deviation requires justification</td></tr>
+        <tr><td><code>may</code></td><td>Optional</td><td>Browsers can choose to implement this or not</td></tr>
+        <tr><td><strong>normative</strong></td><td>Binding text</td><td>Defines actual spec requirements — what browsers must do</td></tr>
+        <tr><td><strong>non-normative</strong> / <em>NOTE:</em></td><td>Informational only</td><td>Explanatory text, examples — browsers are not required to follow this</td></tr>
+        <tr><td><strong>initial value</strong></td><td>Default value of a property</td><td>What it equals when not set in any stylesheet</td></tr>
+        <tr><td><strong>computed value</strong></td><td>Value after all calculations</td><td>What the browser resolves to (e.g., <code>em</code> resolved to <code>px</code>)</td></tr>
+        <tr><td><strong>used value</strong></td><td>After layout constraints applied</td><td>The final actual value used for rendering</td></tr>
+        <tr><td><strong>inherited</strong></td><td>Whether children inherit the property</td><td>Critical for understanding cascading behavior</td></tr>
+        <tr><td><strong>applies to</strong></td><td>Which elements the property works on</td><td>e.g., "applies to: block containers" — doesn't work on inline</td></tr>
+        <tr><td><strong>at-risk</strong></td><td>May be removed before REC</td><td>Don't build production code on "at-risk" features</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The Property Definition Table</h3>
+  <p>Every property in a spec has a definition table. Here's how to read it:</p>
+  <div class="anatomy">
+<span class="hl-yellow">Name:           grid-template-columns</span>
+<span class="hl-green">Value:          none | &lt;track-list&gt; | &lt;auto-track-list&gt; | subgrid &lt;line-name-list&gt;?</span>
+<span class="hl-blue">Initial:        none</span>            ← Default value before any CSS is applied
+<span class="hl-pink">Applies to:     grid containers</span> ← Only works on display:grid elements
+<span class="hl-orange">Inherited:      no</span>             ← Children do NOT inherit this
+<span class="hl-red">Percentages:    refer to inline size of the grid container</span>
+<span class="hl-purple">Computed value: as specified, with lengths made absolute</span>
+<span class="hl-blue">Animation type: simple list of length, percentage, or calc</span>
+  </div>
+  <div class="callout tip">
+    <strong>💡 Reading Tip</strong>
+    The property definition table is the MOST IMPORTANT part of any property's spec entry. It answers: what are valid values? what's the default? does it inherit? what elements does it work on? Read this table before anything else about a property.
+  </div>
+</div>
+
+<!-- SECTION 6 -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <h2>Reading the Formal Syntax Grammar</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">The most intimidating part — demystified completely</p>
+    </div>
+  </div>
+
+  <p>CSS specs define every property's valid values using a formal grammar notation. Once you can read this, you can determine <em>exactly</em> what any property accepts — no guessing.</p>
+
+  <h3>The Value Definition Syntax (Multipliers)</h3>
+  <div class="grammar">
+    <div class="grammar-row"><span class="grammar-sym"> </span><span class="grammar-def">(space) — juxtaposition = all components must appear in order. <code>bold 12px serif</code></span></div>
+    <div class="grammar-row"><span class="grammar-sym">&&</span><span class="grammar-def">All components must appear, in any order. <code>A && B</code> = A then B, or B then A</span></div>
+    <div class="grammar-row"><span class="grammar-sym">||</span><span class="grammar-def">One or more must appear, in any order. <code>A || B</code> = A, B, or both</span></div>
+    <div class="grammar-row"><span class="grammar-sym">|</span><span class="grammar-def">Exactly one of the alternatives. <code>A | B | C</code> = pick one</span></div>
+    <div class="grammar-row"><span class="grammar-sym">[ ]</span><span class="grammar-def">Grouping — like parentheses in math</span></div>
+  </div>
+
+  <h3>The Value Definition Syntax (Multipliers)</h3>
+  <div class="grammar">
+    <div class="grammar-row"><span class="grammar-sym">?</span><span class="grammar-def">Optional — zero or one times</span></div>
+    <div class="grammar-row"><span class="grammar-sym">*</span><span class="grammar-def">Zero or more times</span></div>
+    <div class="grammar-row"><span class="grammar-sym">+</span><span class="grammar-def">One or more times</span></div>
+    <div class="grammar-row"><span class="grammar-sym">{A,B}</span><span class="grammar-def">Between A and B times</span></div>
+    <div class="grammar-row"><span class="grammar-sym">#</span><span class="grammar-def">One or more, comma-separated</span></div>
+    <div class="grammar-row"><span class="grammar-sym">!</span><span class="grammar-def">Group must produce at least one value</span></div>
+  </div>
+
+  <h3>Data Types</h3>
+  <div class="grammar">
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;length&gt;</span><span class="grammar-def">Any length value: px, em, rem, vw, %...</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;number&gt;</span><span class="grammar-def">Any real number: 0.5, 1, -3...</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;integer&gt;</span><span class="grammar-def">Whole numbers only</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;color&gt;</span><span class="grammar-def">Any color value — see CSS Color Module for full grammar</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;image&gt;</span><span class="grammar-def">url(), gradient(), etc.</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;string&gt;</span><span class="grammar-def">Quoted string: "hello"</span></div>
+    <div class="grammar-row"><span class="grammar-sym" style="font-size:12px">&lt;ident&gt;</span><span class="grammar-def">Any CSS identifier (unquoted keyword)</span></div>
+  </div>
+
+  <h3>Worked Example: Decoding a Real Grammar</h3>
+  <p>Let's decode the grammar for the <code>background</code> shorthand from the CSS Backgrounds spec:</p>
+  <pre>background: [ &lt;bg-layer&gt;, ]* &lt;final-bg-layer&gt;</pre>
+  <p>This reads as: zero or more <code>&lt;bg-layer&gt;</code> values each followed by a comma, then exactly one <code>&lt;final-bg-layer&gt;</code>. That's why multiple backgrounds are comma-separated, and why the last one can have a background-color.</p>
+
+  <pre>border-radius: &lt;length-percentage&gt;{1,4} [ / &lt;length-percentage&gt;{1,4} ]?</pre>
+  <p>Reading: 1 to 4 length/percentage values, optionally followed by a <code>/</code> and another 1 to 4 values. The slash separates horizontal and vertical radii — this is why <code>border-radius: 10px / 20px</code> creates elliptical corners.</p>
+
+  <div class="callout info">
+    <strong>📌 Where This Grammar Is Defined</strong>
+    The formal Value Definition Syntax is specified in <em>CSS Values and Units Module Level 4</em> — <code>w3.org/TR/css-values-4/</code>. Read this spec once and you'll be able to decode every other spec's property definitions.
+  </div>
+</div>
+
+<!-- SECTION 7 -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <h2>Key Module Directory</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">The modules every CSS instructor must know</p>
+    </div>
+  </div>
+  <p>Organized by topic. Status verified from <code>w3.org/Style/CSS/current-work</code> (as of Jan 2026).</p>
+
+  <h3>Foundation Modules (Start Here)</h3>
+  <div class="module-grid">
+    <div class="module-card" style="border-color:#1a56db">
+      <span class="mc-status badge badge-rec" style="background:#dcfce7;color:#14532d">REC</span>
+      <div class="mc-title">CSS Syntax Level 3</div>
+      <div class="mc-url">w3.org/TR/css-syntax-3/</div>
+      <div class="mc-desc">How CSS is parsed. Tokenization, rules, at-rules, declarations. The bedrock everything else builds on.</div>
+    </div>
+    <div class="module-card" style="border-color:#1a56db">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Values & Units Level 4</div>
+      <div class="mc-url">w3.org/TR/css-values-4/</div>
+      <div class="mc-desc">Defines all value types (length, color, image, calc()) and the formal value definition syntax used by all specs.</div>
+    </div>
+    <div class="module-card" style="border-color:#1a56db">
+      <span class="mc-status badge badge-rec" style="background:#dcfce7;color:#14532d">REC</span>
+      <div class="mc-title">CSS Cascading & Inheritance L5</div>
+      <div class="mc-url">w3.org/TR/css-cascade-5/</div>
+      <div class="mc-desc">The cascade algorithm, specificity, inheritance, the @layer rule, and !important. Core to understanding how CSS resolves conflicts.</div>
+    </div>
+    <div class="module-card" style="border-color:#1a56db">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Selectors Level 4</div>
+      <div class="mc-url">w3.org/TR/selectors-4/</div>
+      <div class="mc-desc">All selectors: :is(), :where(), :has(), :not(), :nth-child(An+B of S), combinators. Updated Jan 2026.</div>
+    </div>
+  </div>
+
+  <h3>Box Model & Layout</h3>
+  <div class="module-grid">
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Box Model Level 4</div>
+      <div class="mc-url">w3.org/TR/css-box-4/</div>
+      <div class="mc-desc">margin, padding, border areas. The fundamental content/padding/border/margin box model.</div>
+    </div>
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Display Level 3</div>
+      <div class="mc-url">w3.org/TR/css-display-3/</div>
+      <div class="mc-desc">The display property. Defines formatting contexts: block, inline, flow-root, flex, grid, table. How boxes are generated.</div>
+    </div>
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Flexible Box Level 1</div>
+      <div class="mc-url">w3.org/TR/css-flexbox-1/</div>
+      <div class="mc-desc">Flexbox layout. flex-direction, flex-wrap, justify-content, align-items, flex-grow/shrink/basis.</div>
+    </div>
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Grid Layout Level 1 & 2</div>
+      <div class="mc-url">w3.org/TR/css-grid-2/</div>
+      <div class="mc-desc">Grid layout, track definitions, placement, subgrid. Level 2 adds subgrid (now widely supported).</div>
+    </div>
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Positioned Layout Level 3</div>
+      <div class="mc-url">w3.org/TR/css-position-3/</div>
+      <div class="mc-desc">position: static/relative/absolute/fixed/sticky and the top/right/bottom/left offsets.</div>
+    </div>
+    <div class="module-card" style="border-color:#0d9488">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Box Alignment Level 3</div>
+      <div class="mc-url">w3.org/TR/css-align-3/</div>
+      <div class="mc-desc">justify-content, align-items, gap — the unified alignment system for Flex, Grid, and Multi-column.</div>
+    </div>
+  </div>
+
+  <h3>Visual Styling</h3>
+  <div class="module-grid">
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Color Level 4</div>
+      <div class="mc-url">w3.org/TR/css-color-4/</div>
+      <div class="mc-desc">oklch(), display-p3, lab(), color-mix(). Modern wide-gamut color system. Level 5 adds relative color syntax.</div>
+    </div>
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Backgrounds & Borders L3</div>
+      <div class="mc-url">w3.org/TR/css-backgrounds-3/</div>
+      <div class="mc-desc">background-image, multiple backgrounds, border-radius, box-shadow, border-image.</div>
+    </div>
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Transforms Level 2</div>
+      <div class="mc-url">w3.org/TR/css-transforms-2/</div>
+      <div class="mc-desc">2D and 3D transforms: translate, rotate, scale, skew, perspective, transform-origin.</div>
+    </div>
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Transitions Level 1</div>
+      <div class="mc-url">w3.org/TR/css-transitions-1/</div>
+      <div class="mc-desc">transition-property, duration, timing-function, delay. Animating between CSS states.</div>
+    </div>
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Animations Level 1</div>
+      <div class="mc-url">w3.org/TR/css-animations-1/</div>
+      <div class="mc-desc">@keyframes, animation-name, duration, iteration-count, fill-mode.</div>
+    </div>
+    <div class="module-card" style="border-color:#7c3aed">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">Filter Effects Level 1</div>
+      <div class="mc-url">w3.org/TR/filter-effects-1/</div>
+      <div class="mc-desc">filter: blur(), brightness(), contrast(), drop-shadow(), etc.</div>
+    </div>
+  </div>
+
+  <h3>Typography & Text</h3>
+  <div class="module-grid">
+    <div class="module-card" style="border-color:#d97706">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Fonts Level 4</div>
+      <div class="mc-url">w3.org/TR/css-fonts-4/</div>
+      <div class="mc-desc">@font-face, font-weight, font-style, variable fonts, font-display, unicode-range.</div>
+    </div>
+    <div class="module-card" style="border-color:#d97706">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Text Level 3</div>
+      <div class="mc-url">w3.org/TR/css-text-3/</div>
+      <div class="mc-desc">white-space, word-break, overflow-wrap, text-align, letter-spacing, line-break.</div>
+    </div>
+    <div class="module-card" style="border-color:#d97706">
+      <span class="mc-status badge badge-cr" style="background:#ccfbf1;color:#134e4a">CR</span>
+      <div class="mc-title">CSS Text Decoration Level 4</div>
+      <div class="mc-url">w3.org/TR/css-text-decor-4/</div>
+      <div class="mc-desc">text-decoration, text-underline-offset, text-decoration-skip-ink, text-shadow, text-emphasis.</div>
+    </div>
+  </div>
+
+  <h3>Modern / Emerging Modules (Watch These)</h3>
+  <div class="module-grid">
+    <div class="module-card" style="border-color:#dc2626">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Nesting Level 1</div>
+      <div class="mc-url">w3.org/TR/css-nesting-1/</div>
+      <div class="mc-desc">Native CSS nesting (no Sass needed). Updated Jan 22, 2026. Now shipping in all major browsers.</div>
+    </div>
+    <div class="module-card" style="border-color:#dc2626">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Containment Level 3</div>
+      <div class="mc-url">w3.org/TR/css-contain-3/</div>
+      <div class="mc-desc">contain, content-visibility, @container queries. Container queries shipped in all browsers.</div>
+    </div>
+    <div class="module-card" style="border-color:#dc2626">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Custom Properties (Variables)</div>
+      <div class="mc-url">w3.org/TR/css-variables-1/</div>
+      <div class="mc-desc">--custom-property syntax, var(), scope, fallback values. Now a CR, widely supported.</div>
+    </div>
+    <div class="module-card" style="border-color:#dc2626">
+      <span class="mc-status badge badge-wd" style="background:#fef3c7;color:#92400e">WD</span>
+      <div class="mc-title">CSS Scroll Snap Level 2</div>
+      <div class="mc-url">w3.org/TR/css-scroll-snap-2/</div>
+      <div class="mc-desc">scroll-snap-type, scroll-snap-align. Controlled scroll experience without JS.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8 -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div>
+      <h2>Tools & Companion Resources</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">The pro workflow for reading specs efficiently</p>
+    </div>
+  </div>
+
+  <h3>Companion URLs (Bookmark All of These)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>URL</th><th>What It Is</th><th>When to Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>w3.org/Style/CSS/current-work</code></td><td>Master module index</td><td>Every time you need to find a spec</td></tr>
+        <tr><td><code>w3.org/TR/css-2025/</code></td><td>CSS Snapshot 2025</td><td>Authoritative "what is current stable CSS"</td></tr>
+        <tr><td><code>w3.org/TR/css/#properties</code></td><td>Properties index</td><td>Find which module defines any property</td></tr>
+        <tr><td><code>drafts.csswg.org/indexes/#properties</code></td><td>ED properties index</td><td>Same but from editors' drafts — most up-to-date</td></tr>
+        <tr><td><code>github.com/w3c/csswg-drafts</code></td><td>CSSWG GitHub</td><td>Read open issues, track discussions about spec changes</td></tr>
+        <tr><td><code>caniuse.com</code></td><td>Browser support data</td><td>After reading the spec, check if you can actually use it now</td></tr>
+        <tr><td><code>wpt.fyi/results/css</code></td><td>Web Platform Tests results</td><td>See which browsers pass which spec tests</td></tr>
+        <tr><td><code>developer.mozilla.org/en-US/docs/Web/CSS</code></td><td>MDN</td><td>Human-readable companion to specs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Workflow: How to Research a Property Like a Pro</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Find the defining module</h4>
+        <p>Go to <code>drafts.csswg.org/indexes/#properties</code> → Ctrl+F the property name → note which module defines it.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Check the module's status</h4>
+        <p>Go to the module page → check "Status of this Document" → CR or REC = use in production.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Read the property definition table</h4>
+        <p>Check: initial value, applies-to, inherited, computed value, animation type. This answers 80% of common questions.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Decode the formal grammar</h4>
+        <p>Use Section 6 of this guide to parse the value definition. Write out 3 examples yourself to verify understanding.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Cross-check browser support</h4>
+        <p>Go to <code>caniuse.com</code> + <code>wpt.fyi</code>. A spec can say something is required but browsers might not have shipped it yet.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Verify against MDN</h4>
+        <p>MDN is a good sanity-check for your reading. If MDN says something different from the spec, the spec is correct — but also check if MDN might be referencing a newer spec version.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 9 -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div>
+      <h2>CSS Mastery Roadmap: Beginner → Expert</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">A structured learning progression with spec reading woven in at each stage</p>
+    </div>
+  </div>
+
+  <div class="roadmap">
+    <!-- PHASE 1 -->
+    <div class="rm-phase">
+      <div class="rm-dot" style="background:#64748b">1</div>
+      <div class="rm-phase-title">
+        Phase 1: Foundation (Weeks 1–3)
+        <span class="rm-phase-tag" style="background:#e2e8f0;color:#475569">Beginner</span>
+      </div>
+      <p style="font-size:13.5px;color:#475569;margin-bottom:10px"><strong>Goal:</strong> Understand how CSS works mechanically. Box model, cascade, specificity, units.</p>
+      <p style="font-size:13px;color:#475569;margin-bottom:10px"><strong>Specs to start with (read Intro + Abstract only at this stage):</strong></p>
+      <div class="rm-items">
+        <div class="rm-item">CSS Syntax L3</div>
+        <div class="rm-item">CSS Cascade L5</div>
+        <div class="rm-item">CSS Box Model L4</div>
+        <div class="rm-item">CSS Display L3</div>
+        <div class="rm-item">CSS Values & Units L4 (units section only)</div>
+      </div>
+      <p style="font-size:13px;color:#475569;margin-top:10px"><strong>Spec reading skill:</strong> Learn to find the property definition table. Read the "Abstract" of each module to understand its scope.</p>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="rm-phase">
+      <div class="rm-dot" style="background:#0d9488">2</div>
+      <div class="rm-phase-title">
+        Phase 2: Layout Systems (Weeks 4–7)
+        <span class="rm-phase-tag" style="background:#ccfbf1;color:#134e4a">Intermediate</span>
+      </div>
+      <p style="font-size:13.5px;color:#475569;margin-bottom:10px"><strong>Goal:</strong> Master Flexbox, Grid, Positioning. Understand formatting contexts deeply.</p>
+      <div class="rm-items">
+        <div class="rm-item">CSS Flexbox L1 (read full spec)</div>
+        <div class="rm-item">CSS Grid L1 & L2 (read full spec)</div>
+        <div class="rm-item">CSS Box Alignment L3</div>
+        <div class="rm-item">CSS Positioned Layout L3</div>
+        <div class="rm-item">CSS Multi-column Layout L1</div>
+      </div>
+      <p style="font-size:13px;color:#475569;margin-top:10px"><strong>Spec reading skill:</strong> Learn to read the formal grammar. Start decoding property value definitions. Cross-reference between modules (e.g., alignment is defined in CSS Box Alignment but used in Flexbox and Grid).</p>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="rm-phase">
+      <div class="rm-dot" style="background:#1a56db">3</div>
+      <div class="rm-phase-title">
+        Phase 3: Visual & Typography (Weeks 8–11)
+        <span class="rm-phase-tag" style="background:#eff6ff;color:#1e40af">Intermediate-Advanced</span>
+      </div>
+      <p style="font-size:13.5px;color:#475569;margin-bottom:10px"><strong>Goal:</strong> Complete command of color, typography, backgrounds, and visual effects.</p>
+      <div class="rm-items">
+        <div class="rm-item">CSS Color L4 + L5</div>
+        <div class="rm-item">CSS Fonts L4</div>
+        <div class="rm-item">CSS Text L3 & L4</div>
+        <div class="rm-item">CSS Backgrounds & Borders L3</div>
+        <div class="rm-item">CSS Transforms L2</div>
+        <div class="rm-item">CSS Transitions L1</div>
+        <div class="rm-item">CSS Animations L1</div>
+        <div class="rm-item">Filter Effects L1</div>
+      </div>
+      <p style="font-size:13px;color:#475569;margin-top:10px"><strong>Spec reading skill:</strong> Start reading normative text. Distinguish <em>must</em> vs <em>should</em>. Read the Changes section to understand what's new vs CSS2.</p>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="rm-phase">
+      <div class="rm-dot" style="background:#7c3aed">4</div>
+      <div class="rm-phase-title">
+        Phase 4: Modern CSS & Responsive (Weeks 12–15)
+        <span class="rm-phase-tag" style="background:#ede9fe;color:#4c1d95">Advanced</span>
+      </div>
+      <p style="font-size:13.5px;color:#475569;margin-bottom:10px"><strong>Goal:</strong> Responsive design systems, custom properties, container queries, modern selectors.</p>
+      <div class="rm-items">
+        <div class="rm-item">CSS Custom Properties (Variables) L1</div>
+        <div class="rm-item">CSS Containment L3 (@container)</div>
+        <div class="rm-item">CSS Media Queries L4 & L5</div>
+        <div class="rm-item">CSS Selectors L4 (:is, :where, :has)</div>
+        <div class="rm-item">CSS Nesting L1</div>
+        <div class="rm-item">CSS Scroll Snap L1 & L2</div>
+        <div class="rm-item">CSS Overscroll Behavior</div>
+      </div>
+      <p style="font-size:13px;color:#475569;margin-top:10px"><strong>Spec reading skill:</strong> Read full specs including issues. Start monitoring the CSSWG GitHub for open issues on modules you care about.</p>
+    </div>
+
+    <!-- PHASE 5 -->
+    <div class="rm-phase">
+      <div class="rm-dot" style="background:#dc2626">5</div>
+      <div class="rm-phase-title">
+        Phase 5: Mastery — Edge Cases, Interop & Spec Contribution (Ongoing)
+        <span class="rm-phase-tag" style="background:#fef2f2;color:#991b1b">Expert</span>
+      </div>
+      <p style="font-size:13.5px;color:#475569;margin-bottom:10px"><strong>Goal:</strong> Understand the WHY behind spec decisions. Read the cascade algorithm. Understand stacking contexts. Know what's at-risk. File issues.</p>
+      <div class="rm-items">
+        <div class="rm-item">CSS Cascade L5 (full normative read)</div>
+        <div class="rm-item">CSS Values & Units L4 (full grammar section)</div>
+        <div class="rm-item">CSS Logical Properties L1</div>
+        <div class="rm-item">CSS Shapes L1 & L2</div>
+        <div class="rm-item">CSS Masking L1</div>
+        <div class="rm-item">CSS Houdini APIs (Paint, Layout, Typed OM)</div>
+        <div class="rm-item">Compositing & Blending L1</div>
+        <div class="rm-item">Monitor CSSWG GitHub issues</div>
+        <div class="rm-item">CSS Snapshot 2025 — read it fully</div>
+      </div>
+      <p style="font-size:13px;color:#475569;margin-top:10px"><strong>Spec reading skill:</strong> Can read a new module from scratch and extract all key behaviors. Can identify spec ambiguities. Understands the W3C process well enough to file issues or comment on GitHub.</p>
+    </div>
+  </div>
+
+  <h3>Spec Reading Progression (How Your Relationship With Specs Evolves)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Stage</th><th>What You Read</th><th>How You Use It</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Beginner</strong></td><td>Abstract, Table of Contents</td><td>Understand the scope of a module</td></tr>
+        <tr><td><strong>Intermediate</strong></td><td>Property definition tables, value grammars</td><td>Know exactly what a property accepts</td></tr>
+        <tr><td><strong>Advanced</strong></td><td>Full normative chapters</td><td>Understand the cascade, formatting contexts, stacking</td></tr>
+        <tr><td><strong>Expert</strong></td><td>Spec + GitHub issues + Changes section</td><td>Track what's in-progress, file bugs, teach from the source</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 10 -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div>
+      <h2>Quick Reference Cheatsheet</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">Everything at a glance — print this page</p>
+    </div>
+  </div>
+
+  <h3>Status Codes at a Glance</h3>
+  <div class="qr-grid">
+    <div class="qr-card" style="border-left:4px solid #94a3b8">
+      <div class="qr-label">FPWD</div>
+      <div class="qr-val">First Public WD</div>
+      <div class="qr-note">❌ Don't use in production. Anything can change.</div>
+    </div>
+    <div class="qr-card" style="border-left:4px solid #d97706">
+      <div class="qr-label">WD</div>
+      <div class="qr-val">Working Draft</div>
+      <div class="qr-note">⚠️ Experimental. Monitor for changes.</div>
+    </div>
+    <div class="qr-card" style="border-left:4px solid #0d9488">
+      <div class="qr-label">CR</div>
+      <div class="qr-val">Candidate Rec.</div>
+      <div class="qr-note">✅ Safe to use (verify browser support). W3C says "use from here."</div>
+    </div>
+    <div class="qr-card" style="border-left:4px solid #7c3aed">
+      <div class="qr-label">PR</div>
+      <div class="qr-val">Proposed Rec.</div>
+      <div class="qr-note">✅ Almost a standard. Advisory Committee vote pending.</div>
+    </div>
+    <div class="qr-card" style="border-left:4px solid #16a34a">
+      <div class="qr-label">REC</div>
+      <div class="qr-val">Recommendation</div>
+      <div class="qr-note">✅ Official standard. But browsers implement at CR, not REC.</div>
+    </div>
+    <div class="qr-card" style="border-left:4px solid #db2777">
+      <div class="qr-label">ED</div>
+      <div class="qr-val">Editor's Draft</div>
+      <div class="qr-note">🔬 Most current, may be unstable. At drafts.csswg.org</div>
+    </div>
+  </div>
+
+  <h3>Value Definition Grammar — Quick Reference</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Symbol</th><th>Name</th><th>Example</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code> </code> (space)</td><td>Juxtaposition</td><td><code>bold 12px serif</code></td><td>All must appear in order</td></tr>
+        <tr><td><code>&&</code></td><td>All, any order</td><td><code>&lt;length&gt; && &lt;color&gt;</code></td><td>Both required, any order</td></tr>
+        <tr><td><code>||</code></td><td>At least one, any order</td><td><code>bold || italic</code></td><td>One or more, any order</td></tr>
+        <tr><td><code>|</code></td><td>Exactly one</td><td><code>red | blue | green</code></td><td>Pick exactly one</td></tr>
+        <tr><td><code>?</code></td><td>Optional</td><td><code>&lt;color&gt;?</code></td><td>Zero or one</td></tr>
+        <tr><td><code>*</code></td><td>Zero or more</td><td><code>&lt;shadow&gt;*</code></td><td>Any number including none</td></tr>
+        <tr><td><code>+</code></td><td>One or more</td><td><code>&lt;length&gt;+</code></td><td>At least one</td></tr>
+        <tr><td><code>#</code></td><td>Comma list</td><td><code>&lt;color&gt;#</code></td><td>One or more, comma-separated</td></tr>
+        <tr><td><code>{A,B}</code></td><td>Range</td><td><code>&lt;length&gt;{1,4}</code></td><td>Between A and B times</td></tr>
+        <tr><td><code>[ ]</code></td><td>Group</td><td><code>[ a | b ]+</code></td><td>Group for applying multiplier</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Key URLs Cheatsheet</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Task</th><th>Go To</th></tr></thead>
+      <tbody>
+        <tr><td>Find any CSS module</td><td><code>w3.org/Style/CSS/current-work</code></td></tr>
+        <tr><td>Find which module defines a property</td><td><code>drafts.csswg.org/indexes/#properties</code></td></tr>
+        <tr><td>Stable CSS reference</td><td><code>w3.org/TR/css-2025/</code></td></tr>
+        <tr><td>Live editors' drafts</td><td><code>drafts.csswg.org/[module-name]/</code></td></tr>
+        <tr><td>Published spec</td><td><code>w3.org/TR/[module-name]/</code></td></tr>
+        <tr><td>Raise an issue</td><td><code>github.com/w3c/csswg-drafts/issues</code></td></tr>
+        <tr><td>Browser support</td><td><code>caniuse.com</code></td></tr>
+        <tr><td>Conformance tests</td><td><code>wpt.fyi/results/css</code></td></tr>
+        <tr><td>Value definition syntax reference</td><td><code>w3.org/TR/css-values-4/#value-defs</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>CSS Version History (Verified)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Version / Name</th><th>Year</th><th>Status Now</th><th>Key Note</th></tr></thead>
+      <tbody>
+        <tr><td>CSS1</td><td>1996</td><td>Obsolete</td><td>CSSWG considers it obsolete. Covered by CSS2.1 and later modules.</td></tr>
+        <tr><td>CSS2</td><td>1998</td><td>Superseded by CSS2.1</td><td>Had many errors. CSS2.1 replaced it.</td></tr>
+        <tr><td>CSS2.1</td><td>REC 2011</td><td>Active (still the core)</td><td>Definitive core. Later modules extend it. Read Chapter 2 of CSS2.1 for fundamentals.</td></tr>
+        <tr><td>"CSS3" (collective name)</td><td>2010+</td><td>N/A — not a real version</td><td>Marketing name for modular CSS era. No single CSS3 document exists.</td></tr>
+        <tr><td>"CSS4"</td><td>—</td><td>Does not exist</td><td>No CSS4. Some modules are at Level 4 (e.g., Selectors L4), but that's different from "CSS4".</td></tr>
+        <tr><td>Modular CSS (current)</td><td>Ongoing</td><td>Active</td><td>Each module versioned independently. CSS Snapshot 2025 is the current stable reference.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <strong>💡 Final Pro Tip for Instructors</strong>
+    When teaching from specs: always cite the spec section number (e.g., "CSS Grid Level 2, §6.1"). This lets students verify independently and builds the habit of going to primary sources. It also gives you authority — you're not teaching from blogs, you're teaching from the authoritative source.
+  </div>
+</div>
+
+<!-- SOURCES -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num" style="background:var(--gray)">✓</div>
+    <div>
+      <h2>Sources & References</h2>
+      <p style="color:var(--gray);font-size:14px;margin:0">Every factual claim in this guide is traceable to these sources</p>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Source</th><th>URL</th><th>Used For</th></tr></thead>
+      <tbody>
+        <tr><td>W3C CSS Current Work</td><td>w3.org/Style/CSS/current-work</td><td>Module list, status codes, Atom feed, all spec URLs</td></tr>
+        <tr><td>CSS Snapshot 2025</td><td>w3.org/TR/css-2025/</td><td>Maturity level definitions (WD, CR, REC), process description</td></tr>
+        <tr><td>fantasai — Inside CSSWG: Process</td><td>fantasai.inkedblade.net/weblog/2011/inside-csswg/process</td><td>CSSWG-internal view of the spec process, backwards movement of specs</td></tr>
+        <tr><td>CSS-Tricks — CSS Standards Process</td><td>css-tricks.com/css-standards-process/</td><td>Tab Atkins's clarification on REC being "dead," CR as implementation target</td></tr>
+        <tr><td>W3C CSS All Specifications</td><td>w3.org/Style/CSS/specs.en.html</td><td>Module descriptions (Box Model, Speech, etc.)</td></tr>
+        <tr><td>Russ Max Design — Levels of CSS</td><td>russmaxdesign.github.io/maxdesign-slides/02-css/201-levels-of-css.html</td><td>CSS1/2/2.1 dates, modular CSS explanation</td></tr>
+        <tr><td>CSSWG Publish Wiki</td><td>wiki.csswg.org/spec/publish</td><td>Publishing process, FPWD signal, LCWD transition</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center;padding:32px;color:var(--gray);font-size:13px">
+  CSS Spec Mastery Guide · Newton School of Tech · Instructor Training Program<br>
+  Content accuracy-verified as of February 2026 · Sources: W3C, CSSWG, fantasai, CSS-Tricks
+</div>
+
+</div><!-- /container -->
+</body>
+</html>
