@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Read CSS Specs — Newton School of Technology</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --code-bg: #0d0d1a;
+    --rec: #43e97b;
+    --cr: #6c63ff;
+    --wd: #f7971e;
+    --fpwd: #ff6584;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0;
+    padding: 0 2rem;
+    height: 56px;
+    overflow-x: auto;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--accent);
+    white-space: nowrap;
+    margin-right: 2rem;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0 1rem;
+    height: 56px;
+    display: flex; align-items: center;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  nav a:hover, nav a.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    margin-top: 56px;
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.4);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    font-size: 1rem;
+  }
+  .pill-row { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .pill {
+    font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;
+    padding: 0.3rem 0.9rem; border-radius: 20px;
+    border: 1px solid; font-weight: 600;
+  }
+  .pill-green { color: var(--rec); border-color: var(--rec); background: rgba(67,233,123,0.08); }
+  .pill-purple { color: var(--cr); border-color: var(--cr); background: rgba(108,99,255,0.08); }
+  .pill-orange { color: var(--wd); border-color: var(--wd); background: rgba(247,151,30,0.08); }
+  .pill-pink { color: var(--fpwd); border-color: var(--fpwd); background: rgba(255,101,132,0.08); }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+  .section { padding: 4rem 0; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+  }
+  .section-desc { color: var(--muted); max-width: 640px; margin-bottom: 2.5rem; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  /* ── SPEC STATUS BADGES ── */
+  .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .status-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .status-card.rec::before { background: var(--rec); }
+  .status-card.cr::before { background: var(--cr); }
+  .status-card.wd::before { background: var(--wd); }
+  .status-card.fpwd::before { background: var(--fpwd); }
+  .status-card:hover { border-color: #444; transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .status-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+  .status-card.rec .status-badge { background: rgba(67,233,123,0.15); color: var(--rec); }
+  .status-card.cr .status-badge { background: rgba(108,99,255,0.15); color: var(--cr); }
+  .status-card.wd .status-badge { background: rgba(247,151,30,0.15); color: var(--wd); }
+  .status-card.fpwd .status-badge { background: rgba(255,101,132,0.15); color: var(--fpwd); }
+  .status-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+  .status-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  .trust-level { display: flex; gap: 3px; margin-top: 0.8rem; }
+  .trust-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
+  .road-flow {
+    display: flex; align-items: center; gap: 0; min-width: 600px; margin: 1rem 0;
+  }
+  .road-step {
+    flex: 1; text-align: center; position: relative;
+  }
+  .road-circle {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; font-weight: 700;
+    margin: 0 auto 0.5rem;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .road-step:hover .road-circle { transform: scale(1.15); }
+  .road-step.fpwd .road-circle { border-color: var(--fpwd); color: var(--fpwd); background: rgba(255,101,132,0.1); }
+  .road-step.wd .road-circle { border-color: var(--wd); color: var(--wd); background: rgba(247,151,30,0.1); }
+  .road-step.cr .road-circle { border-color: var(--cr); color: var(--cr); background: rgba(108,99,255,0.1); }
+  .road-step.rec .road-circle { border-color: var(--rec); color: var(--rec); background: rgba(67,233,123,0.1); }
+  .road-label { font-size: 0.72rem; color: var(--muted); }
+  .road-arrow { color: var(--border); font-size: 1.2rem; padding: 0 0.5rem; margin-bottom: 1.8rem; }
+
+  /* ── SPEC NAVIGATOR ── */
+  .spec-nav-container {
+    display: grid; grid-template-columns: 240px 1fr; gap: 1.2rem;
+    min-height: 420px;
+  }
+  @media (max-width: 700px) { .spec-nav-container { grid-template-columns: 1fr; } }
+  .spec-toc {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1rem; overflow-y: auto; max-height: 500px;
+  }
+  .spec-toc-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+  }
+  .toc-item {
+    font-size: 0.78rem; padding: 0.4rem 0.7rem; border-radius: 6px;
+    cursor: pointer; color: var(--muted);
+    transition: all 0.15s; border-left: 2px solid transparent;
+    margin-bottom: 2px;
+  }
+  .toc-item:hover { background: var(--surface2); color: var(--text); }
+  .toc-item.active { background: rgba(108,99,255,0.12); color: var(--accent); border-left-color: var(--accent); }
+  .toc-item.child { padding-left: 1.4rem; font-size: 0.73rem; }
+  .spec-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; overflow-y: auto; max-height: 500px;
+  }
+  .spec-section-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    color: var(--accent2); margin-bottom: 0.4rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .spec-section-title {
+    font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 1rem; line-height: 1.3;
+  }
+  .spec-text { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+  .spec-highlight {
+    background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3);
+    border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+    padding: 0.8rem 1rem; margin: 1rem 0; font-size: 0.83rem;
+  }
+  .spec-highlight strong { color: var(--accent); }
+  .spec-note {
+    background: rgba(247,151,30,0.08); border: 1px solid rgba(247,151,30,0.25);
+    border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.8rem; margin: 0.8rem 0;
+  }
+  .spec-note::before { content: '📌 Spec Note: '; color: var(--wd); font-weight: 600; }
+  .spec-term {
+    display: inline-block; background: rgba(67,233,123,0.1);
+    border-bottom: 1px dashed var(--rec); color: var(--rec);
+    cursor: help; padding: 0 2px; position: relative;
+  }
+  .spec-term:hover::after {
+    content: attr(data-def);
+    position: absolute; bottom: 120%; left: 0; min-width: 200px; max-width: 300px;
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.75rem; color: var(--text);
+    z-index: 10; pointer-events: none; line-height: 1.5;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .reading-tip {
+    background: rgba(67,233,123,0.06); border: 1px solid rgba(67,233,123,0.2);
+    border-radius: 8px; padding: 0.8rem 1rem; font-size: 0.8rem; margin-top: 1rem;
+    color: var(--rec);
+  }
+
+  /* ── CASCADE WATERFALL ── */
+  .waterfall-wrap {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+  @media(max-width:700px){.waterfall-wrap{grid-template-columns:1fr;}}
+  .waterfall {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .waterfall-title {
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .cascade-step {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 0.8rem; border-radius: 8px; margin-bottom: 0.5rem;
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.2s; position: relative;
+  }
+  .cascade-step:hover { border-color: #555; background: var(--surface2); }
+  .cascade-step.active { background: rgba(108,99,255,0.1); border-color: var(--accent); }
+  .cascade-step.eliminated { opacity: 0.4; }
+  .cascade-step.eliminated::after {
+    content: '✗ LOST'; position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%); font-size: 0.65rem; color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  }
+  .cascade-step.winner::after {
+    content: '✓ WINS'; position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%); font-size: 0.65rem; color: var(--rec);
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  }
+  .cs-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--border); display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+  }
+  .cs-body .cs-label { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .cs-body .cs-detail { font-size: 0.72rem; color: var(--muted); }
+  .btn {
+    background: var(--accent); color: #fff; border: none;
+    padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer;
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.85rem;
+    transition: all 0.2s; margin-top: 1rem; margin-right: 0.5rem;
+  }
+  .btn:hover { background: #8079ff; transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+  .btn-outline:hover { background: rgba(108,99,255,0.1); }
+
+  /* cascade result preview */
+  .result-box {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  }
+  .result-box .prop { color: var(--accent2); }
+  .result-box .val { color: var(--accent3); }
+  .result-box .cmt { color: var(--muted); }
+
+  /* ── INHERITANCE TREE ── */
+  .inherit-demo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .dom-tree { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+  .dom-node {
+    padding: 0.5rem 0.8rem; border-radius: 8px;
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.2s; margin: 4px 0;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .dom-node:hover { border-color: var(--accent); }
+  .dom-node.selected { border-color: var(--accent); background: rgba(108,99,255,0.1); }
+  .dom-node .tag { color: var(--accent2); }
+  .dom-node .class { color: var(--accent3); }
+  .tree-indent { padding-left: 2rem; border-left: 1px dashed var(--border); margin-left: 0.7rem; }
+  .inherit-info {
+    background: var(--code-bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem; margin-top: 1rem;
+    min-height: 80px;
+  }
+  .inherit-prop { margin-bottom: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+  .from-parent { color: var(--accent3); }
+  .from-self { color: var(--accent2); }
+  .from-initial { color: var(--muted); }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; max-width: 680px;
+  }
+  .quiz-q {
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 1rem;
+    margin-bottom: 1.2rem;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-opt {
+    padding: 0.7rem 1rem; border-radius: 8px;
+    border: 1px solid var(--border); cursor: pointer;
+    font-size: 0.85rem; transition: all 0.15s;
+    background: transparent; color: var(--text); text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: rgba(108,99,255,0.05); }
+  .quiz-opt.correct { border-color: var(--rec); background: rgba(67,233,123,0.1); color: var(--rec); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(255,101,132,0.1); color: var(--accent2); }
+  .quiz-feedback {
+    margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 8px;
+    font-size: 0.85rem; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.good { background: rgba(67,233,123,0.1); border: 1px solid rgba(67,233,123,0.3); }
+  .quiz-feedback.bad { background: rgba(255,101,132,0.1); border: 1px solid rgba(255,101,132,0.3); }
+  .quiz-progress { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+  .qp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+  .qp-dot.done { background: var(--rec); }
+  .qp-dot.current { background: var(--accent); }
+  .qp-dot.wrong-done { background: var(--accent2); }
+  .score-board {
+    text-align: center; padding: 2rem;
+    font-family: 'Syne', sans-serif;
+  }
+  .score-num { font-size: 4rem; font-weight: 800; color: var(--accent); }
+
+  /* ── CODE PLAYGROUND ── */
+  .playground {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .pg-header {
+    background: var(--surface2); border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between;
+  }
+  .pg-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.9rem; }
+  .pg-tabs { display: flex; gap: 0.5rem; }
+  .pg-tab {
+    font-size: 0.72rem; padding: 0.3rem 0.7rem; border-radius: 5px;
+    background: var(--border); cursor: pointer; border: none; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace; transition: all 0.2s;
+  }
+  .pg-tab.active { background: var(--accent); color: #fff; }
+  .pg-body { display: grid; grid-template-columns: 1fr 1fr; }
+  @media(max-width:700px){.pg-body{grid-template-columns:1fr;}}
+  .pg-editor {
+    border-right: 1px solid var(--border); min-height: 220px;
+  }
+  textarea.pg-code {
+    width: 100%; min-height: 220px;
+    background: var(--code-bg); color: var(--text);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    border: none; resize: none; padding: 1rem; outline: none; line-height: 1.7;
+  }
+  .pg-preview { padding: 1rem; min-height: 220px; }
+  iframe.pg-frame { width: 100%; height: 100%; min-height: 200px; border: none; background: #fff; border-radius: 6px; }
+
+  /* ── GLOSSARY ── */
+  .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+  .gloss-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem;
+    transition: border-color 0.2s;
+  }
+  .gloss-card:hover { border-color: var(--accent); }
+  .gloss-term {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--accent3); font-weight: 600; margin-bottom: 0.4rem;
+  }
+  .gloss-def { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 2rem;
+    text-align: center; color: var(--muted); font-size: 0.78rem;
+    margin-top: 4rem;
+  }
+
+  /* ── ACCORDION ── */
+  .accordion { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 0.6rem; }
+  .acc-header {
+    padding: 1rem 1.2rem; cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center;
+    font-weight: 600; font-size: 0.88rem;
+    background: var(--surface); transition: background 0.2s;
+  }
+  .acc-header:hover { background: var(--surface2); }
+  .acc-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s;
+    font-size: 0.83rem; color: var(--muted); line-height: 1.7;
+    padding: 0 1.2rem; background: var(--surface2);
+  }
+  .acc-body.open { max-height: 400px; padding: 1rem 1.2rem; }
+  .acc-arrow { transition: transform 0.3s; font-size: 0.7rem; }
+  .acc-header.open .acc-arrow { transform: rotate(180deg); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">📘 CSS Specs</div>
+  <a href="#module-status" class="active">Module Status</a>
+  <a href="#spec-navigator">Spec Navigator</a>
+  <a href="#cascade">Cascade</a>
+  <a href="#inheritance">Inheritance</a>
+  <a href="#playground">Playground</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Newton School of Technology · Faculty Toolkit</div>
+  <h1>How to Read <span>CSS Specs</span><br>Like a Pro</h1>
+  <p>Using <strong>CSS Cascade &amp; Inheritance</strong> as our teaching example — learn to navigate W3C specifications so you can master any CSS topic from the primary source.</p>
+  <div class="pill-row">
+    <span class="pill pill-green">✓ REC — Use This!</span>
+    <span class="pill pill-purple">CR — Almost There</span>
+    <span class="pill pill-orange">WD — In Progress</span>
+    <span class="pill pill-pink">FPWD — Just Started</span>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 1: MODULE STATUS ━━━ -->
+<section class="section" id="module-status">
+  <div class="container">
+    <div class="section-label">// Step 01 — Before you read a spec</div>
+    <h2 class="section-title">Understanding W3C Spec Status Levels</h2>
+    <p class="section-desc">Before reading any CSS specification, you <strong>must</strong> check its status. Not all specs are stable. Here's the W3C maturity pipeline — from raw idea to web standard. Click each card to learn more.</p>
+
+    <div class="status-grid">
+      <div class="status-card fpwd" onclick="toggleStatusDetail('fpwd')">
+        <div class="status-badge">FPWD</div>
+        <div class="status-name">First Public Working Draft</div>
+        <div class="status-desc">The spec just entered the W3C process. It's a raw idea — could change completely or be abandoned.</div>
+        <div class="trust-level">
+          <div class="trust-dot" style="background:var(--fpwd)"></div>
+          <div class="trust-dot"></div><div class="trust-dot"></div><div class="trust-dot"></div>
+          <span style="font-size:0.68rem;color:var(--muted);margin-left:4px">Trust: Very Low</span>
+        </div>
+      </div>
+      <div class="status-card wd" onclick="toggleStatusDetail('wd')">
+        <div class="status-badge">WD</div>
+        <div class="status-name">Working Draft</div>
+        <div class="status-desc">The spec is being actively developed by the working group. Still may change significantly. Good for learning future direction.</div>
+        <div class="trust-level">
+          <div class="trust-dot" style="background:var(--wd)"></div>
+          <div class="trust-dot" style="background:var(--wd)"></div>
+          <div class="trust-dot"></div><div class="trust-dot"></div>
+          <span style="font-size:0.68rem;color:var(--muted);margin-left:4px">Trust: Low–Medium</span>
+        </div>
+      </div>
+      <div class="status-card cr" onclick="toggleStatusDetail('cr')">
+        <div class="status-badge">CR</div>
+        <div class="status-name">Candidate Recommendation</div>
+        <div class="status-desc">Almost a standard! The spec is feature-complete and browsers are implementing it. Very stable, rarely changes.</div>
+        <div class="trust-level">
+          <div class="trust-dot" style="background:var(--cr)"></div>
+          <div class="trust-dot" style="background:var(--cr)"></div>
+          <div class="trust-dot" style="background:var(--cr)"></div>
+          <div class="trust-dot"></div>
+          <span style="font-size:0.68rem;color:var(--muted);margin-left:4px">Trust: High</span>
+        </div>
+      </div>
+      <div class="status-card rec" onclick="toggleStatusDetail('rec')">
+        <div class="status-badge">REC</div>
+        <div class="status-name">Recommendation</div>
+        <div class="status-desc">The official W3C Standard. Fully stable, widely implemented across all browsers. This is the gold standard source.</div>
+        <div class="trust-level">
+          <div class="trust-dot" style="background:var(--rec)"></div>
+          <div class="trust-dot" style="background:var(--rec)"></div>
+          <div class="trust-dot" style="background:var(--rec)"></div>
+          <div class="trust-dot" style="background:var(--rec)"></div>
+          <span style="font-size:0.68rem;color:var(--muted);margin-left:4px">Trust: Maximum</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;">
+      <p class="section-desc" style="margin-bottom:1rem;">📍 <strong>CSS Cascade & Inheritance Spec:</strong> Where does it sit today?</p>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+        <p style="font-size:0.85rem;margin-bottom:1rem;color:var(--muted)">The pipeline below shows the W3C maturity process. CSS Cascade Level 5 is currently a <strong style="color:var(--cr)">Candidate Recommendation (CR)</strong>. CSS Cascade Level 3 is a full <strong style="color:var(--rec)">REC</strong>.</p>
+        <div class="roadmap">
+          <div class="road-flow">
+            <div class="road-step fpwd">
+              <div class="road-circle">FPWD</div>
+              <div class="road-label">Raw Idea</div>
+            </div>
+            <div class="road-arrow">→</div>
+            <div class="road-step wd">
+              <div class="road-circle">WD</div>
+              <div class="road-label">In Progress</div>
+            </div>
+            <div class="road-arrow">→</div>
+            <div class="road-step cr">
+              <div class="road-circle" style="box-shadow:0 0 12px rgba(108,99,255,0.5)">CR ◀</div>
+              <div class="road-label" style="color:var(--cr)">Cascade L5 is here</div>
+            </div>
+            <div class="road-arrow">→</div>
+            <div class="road-step rec">
+              <div class="road-circle">REC</div>
+              <div class="road-label" style="color:var(--rec)">Cascade L3 ✓</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.8rem;">🔗 <strong>Cascade 5 spec URL:</strong> <code style="color:var(--accent)">https://www.w3.org/TR/css-cascade-5/</code> | <strong>Cascade 3 (REC):</strong> <code style="color:var(--accent)">https://www.w3.org/TR/css-cascade-3/</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 2: SPEC NAVIGATOR ━━━ -->
+<section class="section" id="spec-navigator">
+  <div class="container">
+    <div class="section-label">// Step 02 — How to read the spec</div>
+    <h2 class="section-title">Interactive Spec Navigator</h2>
+    <p class="section-desc">This simulates how you navigate a real W3C spec. Use the table of contents on the left just like the real spec page. Each section teaches you what to look for.</p>
+
+    <div class="spec-nav-container">
+      <div class="spec-toc">
+        <div class="spec-toc-title">Table of Contents</div>
+        <div class="toc-item active" onclick="loadSpecSection('abstract')">Abstract</div>
+        <div class="toc-item" onclick="loadSpecSection('status')">Status of this Document</div>
+        <div class="toc-item" onclick="loadSpecSection('intro')">1. Introduction</div>
+        <div class="toc-item" onclick="loadSpecSection('cascading')">2. Cascading</div>
+        <div class="toc-item child" onclick="loadSpecSection('origins')">2.1 Cascade Origins</div>
+        <div class="toc-item child" onclick="loadSpecSection('importance')">2.2 Importance (!important)</div>
+        <div class="toc-item child" onclick="loadSpecSection('specificity')">2.3 Specificity</div>
+        <div class="toc-item child" onclick="loadSpecSection('order')">2.4 Order of Appearance</div>
+        <div class="toc-item" onclick="loadSpecSection('inheritance')">3. Inheritance</div>
+        <div class="toc-item child" onclick="loadSpecSection('inherit-keyword')">3.1 The inherit keyword</div>
+        <div class="toc-item child" onclick="loadSpecSection('initial-keyword')">3.2 The initial keyword</div>
+        <div class="toc-item child" onclick="loadSpecSection('unset-keyword')">3.3 The unset keyword</div>
+        <div class="toc-item" onclick="loadSpecSection('value-processing')">4. Value Processing</div>
+        <div class="toc-item" onclick="loadSpecSection('conformance')">Appendix A: Conformance</div>
+      </div>
+      <div class="spec-panel" id="spec-panel-content">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 3: CASCADE VISUALIZER ━━━ -->
+<section class="section" id="cascade">
+  <div class="container">
+    <div class="section-label">// Step 03 — Cascade in action</div>
+    <h2 class="section-title">The Cascade Waterfall Visualizer</h2>
+    <p class="section-desc">When multiple CSS rules target the same element, the browser runs through the cascade to decide the winner. Click "Run Cascade" to see it step by step.</p>
+
+    <div class="waterfall-wrap">
+      <div class="waterfall">
+        <div class="waterfall-title">🎯 Which color wins for <code style="color:var(--accent2)">&lt;p class="intro"&gt;</code>?</div>
+
+        <div class="cascade-step" id="cs1">
+          <div class="cs-num">1</div>
+          <div class="cs-body">
+            <div class="cs-label">Origin: Browser Default (User Agent)</div>
+            <div class="cs-detail"><code>p { color: black; }</code> — lowest priority origin</div>
+          </div>
+        </div>
+        <div class="cascade-step" id="cs2">
+          <div class="cs-num">2</div>
+          <div class="cs-body">
+            <div class="cs-label">Origin: Author Stylesheet (your CSS)</div>
+            <div class="cs-detail"><code>p { color: navy; }</code> — element selector, specificity 0-0-1</div>
+          </div>
+        </div>
+        <div class="cascade-step" id="cs3">
+          <div class="cs-num">3</div>
+          <div class="cs-body">
+            <div class="cs-label">Author Stylesheet — Higher Specificity</div>
+            <div class="cs-detail"><code>.intro { color: teal; }</code> — class selector, specificity 0-1-0</div>
+          </div>
+        </div>
+        <div class="cascade-step" id="cs4">
+          <div class="cs-num">4</div>
+          <div class="cs-body">
+            <div class="cs-label">Inline Style on Element</div>
+            <div class="cs-detail"><code style="opacity:0.6">not present in this example</code></div>
+          </div>
+        </div>
+        <div class="cascade-step" id="cs5">
+          <div class="cs-num">5</div>
+          <div class="cs-body">
+            <div class="cs-label">!important Author Rule</div>
+            <div class="cs-detail"><code style="opacity:0.6">not present in this example</code></div>
+          </div>
+        </div>
+
+        <button class="btn" onclick="runCascade()">▶ Run Cascade</button>
+        <button class="btn btn-outline" onclick="resetCascade()">↺ Reset</button>
+
+        <div class="result-box" id="cascade-result" style="display:none">
+          <span class="cmt">/* Browser computed: */</span><br>
+          <span class="prop">color</span>: <span class="val">teal</span>; <span class="cmt">/* .intro wins — highest specificity */</span>
+        </div>
+      </div>
+
+      <div class="waterfall">
+        <div class="waterfall-title">📐 Specificity Calculator</div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:1rem;">Type a CSS selector below to calculate its specificity score in real time.</p>
+        <input id="spec-input" type="text" placeholder="e.g. .nav > a.active" style="width:100%;padding:0.7rem 1rem;border-radius:8px;background:var(--code-bg);border:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.85rem;outline:none;margin-bottom:0.8rem;" oninput="calcSpecificity(this.value)">
+        <div id="spec-result" style="display:none">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;margin-bottom:0.8rem;">
+            <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:0.8rem;text-align:center;">
+              <div id="spec-a" style="font-size:1.8rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent2)">0</div>
+              <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">IDs</div>
+            </div>
+            <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:0.8rem;text-align:center;">
+              <div id="spec-b" style="font-size:1.8rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent)">0</div>
+              <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Classes/Attrs/Pseudo-classes</div>
+            </div>
+            <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:0.8rem;text-align:center;">
+              <div id="spec-c" style="font-size:1.8rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--accent3)">0</div>
+              <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Elements/Pseudo-elements</div>
+            </div>
+          </div>
+          <div id="spec-total" style="background:var(--surface2);border-radius:8px;padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.85rem;"></div>
+        </div>
+        <div style="margin-top:1.5rem;">
+          <div class="waterfall-title" style="font-size:0.9rem;margin-bottom:0.8rem;">🏆 Specificity Priority Order (Spec Rule)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);line-height:2;">
+            <div>1. <span style="color:var(--accent2)">!important</span> + user-agent rules (highest)</div>
+            <div>2. <span style="color:var(--accent2)">!important</span> + author rules</div>
+            <div>3. Inline <span style="color:var(--accent)">style=""</span> attribute</div>
+            <div>4. <span style="color:var(--accent2)">#id</span> selectors</div>
+            <div>5. <span style="color:var(--accent3)">.class</span>, [attr], :pseudo-class</div>
+            <div>6. <span style="color:var(--text)">element</span>, ::pseudo-element</div>
+            <div>7. Browser defaults (lowest)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 4: INHERITANCE TREE ━━━ -->
+<section class="section" id="inheritance">
+  <div class="container">
+    <div class="section-label">// Step 04 — Inheritance</div>
+    <h2 class="section-title">DOM Inheritance Explorer</h2>
+    <p class="section-desc">Click any element in the DOM tree to see which CSS properties it inherits from its parent and which it doesn't. This mirrors what the spec says about "inherited" vs "non-inherited" properties.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div class="inherit-demo">
+        <div class="waterfall-title" style="margin-bottom:1.2rem;">🌳 DOM Tree</div>
+        <div class="dom-tree">
+          <div class="dom-node" id="dn-body" onclick="selectNode('body')" style="border-color:var(--accent);">
+            <span class="tag">&lt;body&gt;</span>
+            <span style="font-size:0.65rem;color:var(--muted)">font-family:Georgia; color:#333;</span>
+          </div>
+          <div class="tree-indent">
+            <div class="dom-node" id="dn-div" onclick="selectNode('div')">
+              <span class="tag">&lt;div</span><span class="class"> .container</span><span class="tag">&gt;</span>
+              <span style="font-size:0.65rem;color:var(--muted)">background:white;</span>
+            </div>
+            <div class="tree-indent">
+              <div class="dom-node" id="dn-h1" onclick="selectNode('h1')">
+                <span class="tag">&lt;h1&gt;</span>
+                <span style="font-size:0.65rem;color:var(--muted)">font-size:2rem;</span>
+              </div>
+              <div class="dom-node" id="dn-p" onclick="selectNode('p')">
+                <span class="tag">&lt;p&gt;</span>
+                <span style="font-size:0.65rem;color:var(--muted)">margin:1rem 0;</span>
+              </div>
+              <div class="tree-indent">
+                <div class="dom-node" id="dn-a" onclick="selectNode('a')">
+                  <span class="tag">&lt;a</span><span class="class"> .link</span><span class="tag">&gt;</span>
+                  <span style="font-size:0.65rem;color:var(--muted)">color:blue;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="inherit-demo" style="margin-bottom:1rem;">
+          <div class="waterfall-title" style="margin-bottom:0.8rem;">📋 Computed Properties for Selected Element</div>
+          <div class="inherit-info" id="inherit-info">
+            <p style="color:var(--muted);font-size:0.8rem;">← Click an element in the DOM tree to inspect it</p>
+          </div>
+        </div>
+        <div class="card" style="padding:1rem;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.8rem;font-size:0.9rem;">🔑 The Spec Rule (§3)</div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.6;">
+            The spec categorizes every CSS property as either <span style="color:var(--accent3);font-weight:600">inherited</span> or <span style="color:var(--accent2);font-weight:600">non-inherited</span>.
+            <br><br>
+            <span style="color:var(--accent3)">✦ Inherited</span>: color, font-family, font-size, line-height, text-align…<br>
+            <span style="color:var(--accent2)">✦ Non-inherited</span>: background, border, margin, padding, width, height…
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 5: HOW TO READ - ACCORDION ━━━ -->
+<section class="section" id="how-to-read">
+  <div class="container">
+    <div class="section-label">// Step 05 — The method</div>
+    <h2 class="section-title">A 7-Step Method to Read Any CSS Spec</h2>
+    <p class="section-desc">Your students can use this exact method for every CSS topic they study. We'll demonstrate each step using the Cascade spec.</p>
+
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>📍 Step 1 — Find the right spec on w3.org/TR/</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        Go to <strong>https://www.w3.org/TR/</strong> and search for your topic. You'll see multiple versions. Always check the latest REC first. If the feature you want is only in a CR or WD, note that it might not be fully supported. <br><br>For Cascade: search "css cascade" → pick <code>css-cascade-5</code> (CR) or <code>css-cascade-3</code> (REC).
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>🔖 Step 2 — Read the Abstract first (2 minutes)</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        The abstract is the summary of the entire spec in 3–5 sentences. It tells you exactly what problem this spec solves. <br><br>The Cascade spec abstract says: "This document describes how to collate style rules and assign values to all properties on all elements. By way of cascading and inheritance, values are propagated for all properties on all elements."<br><br>From this you already know the spec covers: (1) collating rules, (2) assigning values, (3) cascading, (4) inheritance.
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>📋 Step 3 — Scan the Table of Contents</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        The TOC gives you the entire mental model. Don't read yet — just understand the structure. In the Cascade spec:<br><br>
+        • Section 2 = Cascading (the algorithm)<br>
+        • Section 3 = Defaulting (inherit, initial, unset)<br>
+        • Section 4 = Value Processing (computed, used, actual values)<br><br>
+        Now you know WHERE to look when you need something specific.
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>📖 Step 4 — Read section introductions, not every word</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        Each section starts with a paragraph that summarizes it. Read that first. If it's relevant, go deeper. Don't try to read the entire spec linearly — treat it like a reference manual, not a novel.<br><br>
+        Look for <strong>NOTE:</strong> blocks — these are official clarifications written for readers like you. They explain tricky edge cases in plain language.
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>🔍 Step 5 — Use the browser's Find (Ctrl+F) on the spec page</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        W3C spec pages are just web pages. Use Ctrl+F to search for specific keywords like "specificity", "inherit", or "computed value". This gets you to the exact definition instantly.<br><br>
+        The spec also has a <strong>Terms</strong> or <strong>Index</strong> appendix with links to every defined term in the document.
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>🧩 Step 6 — Identify normative vs informative content</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        Specs use two types of language:<br><br>
+        <strong style="color:var(--accent2)">NORMATIVE</strong> — Uses words like "MUST", "SHALL", "REQUIRED". This is the law. Browsers must implement this.<br><br>
+        <strong style="color:var(--muted)">INFORMATIVE</strong> — Examples, notes, explanations. Helpful context, not binding rules.<br><br>
+        As a learner, focus on informative content first (examples &amp; notes), then read normative definitions for precision.
+      </div>
+    </div>
+    <div class="accordion" onclick="toggleAcc(this)">
+      <div class="acc-header">
+        <span>🧪 Step 7 — Test the spec claim in the browser immediately</span>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        After reading a spec rule, immediately open the browser DevTools and test it. For example, after reading about cascade origin, write three rules with different origins and use the DevTools to see which wins.<br><br>
+        The Playground section below lets you do exactly this — type CSS and see results in real time.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 6: PLAYGROUND ━━━ -->
+<section class="section" id="playground">
+  <div class="container">
+    <div class="section-label">// Step 06 — Test it yourself</div>
+    <h2 class="section-title">Live CSS Playground</h2>
+    <p class="section-desc">Type CSS and HTML below and see the result instantly. Use this to verify what the spec says — just like Step 7 in the reading method.</p>
+
+    <div class="playground">
+      <div class="pg-header">
+        <div class="pg-title">Live Editor — Cascade &amp; Inheritance Demo</div>
+        <div class="pg-tabs">
+          <button class="pg-tab active" onclick="switchPreset('cascade')">Cascade</button>
+          <button class="pg-tab" onclick="switchPreset('inherit')">Inheritance</button>
+          <button class="pg-tab" onclick="switchPreset('specificity')">Specificity</button>
+          <button class="pg-tab" onclick="switchPreset('keywords')">inherit / initial</button>
+        </div>
+      </div>
+      <div class="pg-body">
+        <div class="pg-editor">
+          <textarea class="pg-code" id="pg-code" oninput="updatePreview()" spellcheck="false"></textarea>
+        </div>
+        <div class="pg-preview">
+          <iframe class="pg-frame" id="pg-frame"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 7: QUIZ ━━━ -->
+<section class="section" id="quiz">
+  <div class="container">
+    <div class="section-label">// Step 07 — Test your knowledge</div>
+    <h2 class="section-title">Spec Knowledge Quiz</h2>
+    <p class="section-desc">10 questions directly derived from what the CSS Cascade &amp; Inheritance spec says. No tricks — just understanding.</p>
+
+    <div class="quiz-card" id="quiz-container">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ━━━ SECTION 8: GLOSSARY ━━━ -->
+<section class="section" id="glossary">
+  <div class="container">
+    <div class="section-label">// Bonus — Spec vocabulary</div>
+    <h2 class="section-title">Spec Glossary</h2>
+    <p class="section-desc">CSS specs use very precise language. Here are the key terms from the Cascade spec you must know — with plain-English definitions.</p>
+    <div class="glossary-grid" id="glossary-grid">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<footer>
+  Built for Newton School of Technology · Faculty Teaching Toolkit · CSS Cascade &amp; Inheritance · W3C Spec Reading Method<br>
+  Based on <strong>CSS Cascading and Inheritance Level 5</strong> — <code>https://www.w3.org/TR/css-cascade-5/</code>
+</footer>
+
+<script>
+// ─── SPEC SECTIONS DATA ───
+const specSections = {
+  abstract: {
+    tag: 'Abstract',
+    title: 'What is this spec about?',
+    content: `
+      <p class="spec-text">This is the first thing you should <strong>always read</strong> in any spec. It's 3–5 sentences that tell you everything the document covers.</p>
+      <div class="spec-highlight">
+        <strong>Official W3C Abstract (paraphrased):</strong><br>
+        "This module describes how to collate style rules and assign values to all properties on all elements. By way of cascading and inheritance, values are propagated for all properties on all elements."
+      </div>
+      <div class="reading-tip">💡 <strong>Reading Tip:</strong> After reading the abstract, ask yourself: "Do I now know what problem this spec solves?" If yes, move to the Table of Contents next.</div>
+    `
+  },
+  status: {
+    tag: '§ Status',
+    title: 'Status of this Document — Critical Section!',
+    content: `
+      <p class="spec-text">This section tells you whether the spec is safe to use as a reference. Never skip this!</p>
+      <div class="spec-highlight">
+        <strong>What to look for:</strong><br>
+        • The maturity level (FPWD / WD / CR / REC)<br>
+        • Whether the spec is actively maintained<br>
+        • Link to the latest version<br>
+        • Feedback/errata information
+      </div>
+      <div class="spec-note">CSS Cascade Level 5 is a Candidate Recommendation Snapshot. It's stable enough to learn from, but still technically subject to change before becoming a full REC.</div>
+      <div class="reading-tip">💡 <strong>Teaching Note:</strong> Always show students the "Status" section first. A WD spec today might look different in 6 months. REC specs are frozen forever.</div>
+    `
+  },
+  intro: {
+    tag: '§ 1',
+    title: '1. Introduction',
+    content: `
+      <p class="spec-text">Introductions in W3C specs are <strong>informative</strong> (not normative). They're written to help you understand context — great for beginners!</p>
+      <div class="spec-highlight">
+        <strong>What CSS Cascade intro tells us:</strong><br>
+        CSS is designed so that rules from multiple sources (browser, author, user) can coexist. The cascade is the algorithm that decides whose rules win when there's a conflict. Inheritance fills in values for properties that weren't explicitly set.
+      </div>
+      <div class="reading-tip">💡 <strong>Reading Tip:</strong> Intro sections use plain language. If the rest of the spec is confusing, come back to the intro — it often explains the intent behind the technical rules.</div>
+    `
+  },
+  cascading: {
+    tag: '§ 2',
+    title: '2. Cascading — The Core Algorithm',
+    content: `
+      <p class="spec-text">This is the heart of the spec. The cascade is an algorithm that takes a list of declarations, filters them, and picks the winning value for each property.</p>
+      <div class="spec-highlight">
+        <strong>The cascade algorithm (from spec) — in order of priority:</strong><br>
+        1. Filter by applicable declarations<br>
+        2. Sort by cascade origin and importance<br>
+        3. Sort by specificity<br>
+        4. Sort by order of appearance
+      </div>
+      <div class="spec-note">The spec says: "The cascade takes an unordered list of declared values for a given property on a given element, sorts them by their declaration's precedence, and outputs a single cascaded value."</div>
+      <div class="reading-tip">💡 <strong>Teaching Tip:</strong> Map each step of this algorithm to the Waterfall Visualizer above. Walk students through it live.</div>
+    `
+  },
+  origins: {
+    tag: '§ 2.1',
+    title: '2.1 Cascade Origins',
+    content: `
+      <p class="spec-text">Every CSS declaration comes from one of three possible origins. Understanding origins is step 1 of the cascade algorithm.</p>
+      <div class="spec-highlight">
+        <strong>The three origins (spec §2.1):</strong><br>
+        • <strong style="color:var(--accent2)">User-Agent origin</strong> — Browser's built-in styles (h1 is bold, links are blue)<br>
+        • <strong style="color:var(--accent)">User origin</strong> — Styles added by the user (accessibility overrides)<br>
+        • <strong style="color:var(--accent3)">Author origin</strong> — Your CSS file (what we write as developers)
+      </div>
+      <p class="spec-text">Author styles beat User styles beat User-Agent styles — <em>unless</em> !important is used, which reverses the order.</p>
+      <div class="reading-tip">💡 <strong>What beginners misunderstand:</strong> There's actually a USER stylesheet too! Users with accessibility needs can write their own CSS that overrides yours.</div>
+    `
+  },
+  importance: {
+    tag: '§ 2.2',
+    title: '2.2 Important Declarations (!important)',
+    content: `
+      <p class="spec-text">Adding <code style="color:var(--accent2)">!important</code> to a declaration flips the origin priority order. The spec treats this as a separate "important" layer above the normal cascade.</p>
+      <div class="spec-highlight">
+        <strong>Important order (from highest to lowest, spec §2.2):</strong><br>
+        1. !important Transition declarations<br>
+        2. !important User-Agent declarations<br>
+        3. !important User declarations<br>
+        4. !important Author declarations<br>
+        5. (normal cascade order)<br>
+        6. Animation declarations
+      </div>
+      <div class="spec-note">The spec explicitly warns: "The !important annotation is intended to give users the ability to override author styles... authors should use it sparingly." This is why using !important too much is bad practice.</div>
+    `
+  },
+  specificity: {
+    tag: '§ 2.3',
+    title: '2.3 Specificity',
+    content: `
+      <p class="spec-text">When two declarations have the same origin and importance, the one with higher specificity wins. The spec defines specificity as a three-number tuple: <strong>(A, B, C)</strong>.</p>
+      <div class="spec-highlight">
+        <strong>Specificity calculation (from spec):</strong><br>
+        • <strong>A</strong> = count of ID selectors (#id)<br>
+        • <strong>B</strong> = count of class, attribute, pseudo-class selectors<br>
+        • <strong>C</strong> = count of type (element) and pseudo-element selectors<br><br>
+        Compare left to right: A wins over B, B wins over C.
+      </div>
+      <p class="spec-text">Example: <code>#header .nav a</code> → specificity = (1, 1, 1) — ID provides the dominant A score.</p>
+      <div class="reading-tip">💡 Try the Specificity Calculator in the Cascade Waterfall section above!</div>
+    `
+  },
+  order: {
+    tag: '§ 2.4',
+    title: '2.4 Order of Appearance',
+    content: `
+      <p class="spec-text">The last tiebreaker in the cascade. When origin, importance, and specificity are all equal, the <strong>last declared rule wins</strong>.</p>
+      <div class="spec-highlight">
+        <strong>Spec rule (§2.4):</strong><br>
+        "If two declarations have the same weight, the later declaration wins."<br><br>
+        This applies to: declarations in the same stylesheet, or stylesheets linked in order.
+      </div>
+      <div class="spec-note">Linked stylesheet order matters! A stylesheet linked second overrides the first, if specificity is equal.</div>
+    `
+  },
+  inheritance: {
+    tag: '§ 3',
+    title: '3. Defaulting — Inheritance',
+    content: `
+      <p class="spec-text">After cascading, some properties still have no value. The spec defines two mechanisms for filling them in: <strong>inheritance</strong> and <strong>initial values</strong>.</p>
+      <div class="spec-highlight">
+        <strong>The spec definition of inheritance (§3.1):</strong><br>
+        "If the cascaded value of a property is the inherit keyword, or if the property is inherited and the cascaded value is absent, then the inherited value becomes the property's specified value."
+      </div>
+      <p class="spec-text">Every CSS property in the spec lists whether it is <span class="spec-term" data-def="Inherited: Yes means child elements get this value automatically from their parent if not explicitly set.">Inherited: Yes</span> or <span class="spec-term" data-def="Inherited: No means this property does NOT pass to children. Each child starts from the initial value.">Inherited: No</span>.</p>
+      <div class="reading-tip">💡 <strong>Where to find it in the spec:</strong> Every property definition has a box at the top showing Name, Value, Initial, Applies to, Inherited, Percentages, and Computed value. Always check "Inherited" in that box!</div>
+    `
+  },
+  'inherit-keyword': {
+    tag: '§ 3.2',
+    title: 'The inherit Keyword',
+    content: `
+      <p class="spec-text">The <code style="color:var(--accent3)">inherit</code> keyword forces an element to use its parent's computed value for a property — even if that property is normally non-inherited.</p>
+      <div class="spec-highlight">
+        <strong>Use case:</strong><br>
+        <code>button { color: inherit; }</code><br>
+        → Forces the button's text color to match whatever its parent element's color is, even though buttons have a browser-default color.
+      </div>
+    `
+  },
+  'initial-keyword': {
+    tag: '§ 3.3',
+    title: 'The initial Keyword',
+    content: `
+      <p class="spec-text">The <code style="color:var(--accent2)">initial</code> keyword resets a property to the spec-defined initial value — ignoring all cascade and inheritance.</p>
+      <div class="spec-highlight">
+        <strong>Example:</strong><br>
+        <code>.reset { color: initial; }</code><br>
+        → Sets color to its spec initial value — which is "black" for most elements. Useful for resetting inherited values.
+      </div>
+      <div class="reading-tip">💡 The initial value of every property is listed in its property definition box in the spec. Look for "Initial: computed value of..."</div>
+    `
+  },
+  'unset-keyword': {
+    tag: '§ 3.4',
+    title: 'The unset Keyword',
+    content: `
+      <p class="spec-text"><code style="color:var(--accent)">unset</code> is a smart combination: it acts like <code>inherit</code> for inherited properties, and like <code>initial</code> for non-inherited properties.</p>
+      <div class="spec-highlight">
+        <strong>From the spec (§3.4):</strong><br>
+        "If the property is an inherited property, this is treated as inherit, and if it is not, this is treated as initial."<br><br>
+        Essentially: "just go back to whatever CSS would normally do."
+      </div>
+    `
+  },
+  'value-processing': {
+    tag: '§ 4',
+    title: '4. Value Processing Stages',
+    content: `
+      <p class="spec-text">The spec defines multiple stages a value passes through before the browser applies it. This is advanced, but important!</p>
+      <div class="spec-highlight">
+        <strong>Value stages (from spec §4):</strong><br>
+        1. <strong style="color:var(--fpwd)">Declared value</strong> — what you wrote in CSS<br>
+        2. <strong style="color:var(--wd)">Cascaded value</strong> — winner after cascade algorithm<br>
+        3. <strong style="color:var(--cr)">Specified value</strong> — after inheritance/initial fills gaps<br>
+        4. <strong style="color:var(--rec)">Computed value</strong> — absolute values resolved (% → px)<br>
+        5. <strong style="color:var(--accent3)">Used value</strong> — after layout is calculated<br>
+        6. <strong style="color:var(--accent)">Actual value</strong> — final value the browser renders
+      </div>
+      <div class="reading-tip">💡 When you use DevTools "Computed" tab, you're seeing the Computed Value (stage 4). This is why DevTools is the best companion to reading the spec!</div>
+    `
+  },
+  conformance: {
+    tag: '§ Appendix',
+    title: 'Appendix: Conformance — For Advanced Readers',
+    content: `
+      <p class="spec-text">The conformance section defines what it means for a browser to "correctly implement" this spec. You usually don't need this as a developer.</p>
+      <div class="spec-highlight">
+        <strong>Why it matters for students:</strong><br>
+        When a browser behaves differently than the spec says, you can cite the spec and file a bug! Knowing the spec is the tool that lets you distinguish browser bugs from incorrect assumptions.
+      </div>
+      <div class="reading-tip">💡 <strong>Teaching moment:</strong> Show students how to file a browser bug using crbug.com (Chrome) or bugzilla.mozilla.org (Firefox), citing the specific spec section.</div>
+    `
+  }
+};
+
+function loadSpecSection(key) {
+  const s = specSections[key];
+  if (!s) return;
+  document.getElementById('spec-panel-content').innerHTML = `
+    <div class="spec-section-tag">${s.tag}</div>
+    <div class="spec-section-title">${s.title}</div>
+    ${s.content}
+  `;
+  document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.toc-item').forEach(el => {
+    if (el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${key}'`)) {
+      el.classList.add('active');
+    }
+  });
+}
+loadSpecSection('abstract');
+
+// ─── CASCADE VISUALIZER ───
+let cascadeRunning = false;
+async function runCascade() {
+  if (cascadeRunning) return;
+  cascadeRunning = true;
+  resetCascade();
+  await sleep(300);
+  const steps = ['cs1','cs2','cs3','cs4','cs5'];
+  const winners = [false, false, true, false, false]; // cs3 wins
+  for (let i = 0; i < steps.length; i++) {
+    const el = document.getElementById(steps[i]);
+    el.classList.add('active');
+    await sleep(600);
+    if (i < steps.length - 1 || !winners[i]) {
+      el.classList.remove('active');
+      if (!winners[i] && i < 2) el.classList.add('eliminated');
+      if (winners[i]) el.classList.add('winner');
+    }
+    if (winners[i]) {
+      el.classList.add('winner');
+      el.classList.remove('active');
+    }
+  }
+  document.getElementById('cascade-result').style.display = 'block';
+  cascadeRunning = false;
+}
+function resetCascade() {
+  ['cs1','cs2','cs3','cs4','cs5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','eliminated','winner');
+  });
+  document.getElementById('cascade-result').style.display = 'none';
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── SPECIFICITY CALCULATOR ───
+function calcSpecificity(sel) {
+  if (!sel.trim()) { document.getElementById('spec-result').style.display = 'none'; return; }
+  document.getElementById('spec-result').style.display = 'block';
+  const ids = (sel.match(/#[\w-]+/g) || []).length;
+  const cls = (sel.match(/\.[\w-]+|\[[\w-='"~^$*|]+\]|:(hover|focus|active|visited|first-child|last-child|nth-child[^)]*\)|not\([^)]*\))/g) || []).length;
+  const els = (sel.match(/(?:^|[\s>+~])([a-zA-Z][\w-]*)|::(before|after|first-line|first-letter|selection)/g) || []).filter(m => !m.startsWith('::')).length +
+              (sel.match(/::(before|after|first-line|first-letter|selection)/g) || []).length;
+  document.getElementById('spec-a').textContent = ids;
+  document.getElementById('spec-b').textContent = cls;
+  document.getElementById('spec-c').textContent = els;
+  document.getElementById('spec-total').innerHTML =
+    `<span style="color:var(--muted)">Specificity tuple: </span><span style="color:var(--accent2)">(${ids},</span><span style="color:var(--accent)">${cls},</span><span style="color:var(--accent3)">${els})</span> <span style="color:var(--muted)"> — ${ids > 0 ? 'ID dominates' : cls > 0 ? 'Class-level' : els > 0 ? 'Element-level' : 'No specificity (universal)'}`;
+}
+
+// ─── INHERITANCE EXPLORER ───
+const nodeData = {
+  body: {
+    label: '<body>',
+    own: { 'font-family': 'Georgia', 'color': '#333333', 'font-size': '16px' },
+    inherited: {},
+    nonInherited: { 'background': 'white' }
+  },
+  div: {
+    label: '<div.container>',
+    own: { 'background': 'white' },
+    inherited: { 'font-family': 'Georgia (from body)', 'color': '#333333 (from body)', 'font-size': '16px (from body)' },
+    nonInherited: { 'border': 'initial (not inherited)', 'margin': 'initial (not inherited)' }
+  },
+  h1: {
+    label: '<h1>',
+    own: { 'font-size': '2rem (own)' },
+    inherited: { 'font-family': 'Georgia (from body → div)', 'color': '#333333 (from body)', 'font-weight': 'bold (browser UA default)' },
+    nonInherited: { 'margin': 'UA default (not inherited)', 'padding': 'initial (not inherited)' }
+  },
+  p: {
+    label: '<p>',
+    own: { 'margin': '1rem 0 (own)' },
+    inherited: { 'font-family': 'Georgia (from body)', 'color': '#333333 (from body)', 'font-size': '16px (from body)' },
+    nonInherited: { 'border': 'initial (not inherited)', 'padding': 'initial (not inherited)' }
+  },
+  a: {
+    label: '<a.link>',
+    own: { 'color': 'blue (own — overrides parent)' },
+    inherited: { 'font-family': 'Georgia (from body)', 'font-size': '16px (from body)' },
+    nonInherited: { 'text-decoration': 'underline (UA default, not inherited)', 'border': 'initial (not inherited)' }
+  }
+};
+
+function selectNode(key) {
+  document.querySelectorAll('.dom-node').forEach(n => n.classList.remove('selected'));
+  document.getElementById('dn-' + key).classList.add('selected');
+  const d = nodeData[key];
+  let html = `<div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.6rem;font-size:0.85rem;">${d.label}</div>`;
+
+  html += `<div style="margin-bottom:0.4rem;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Own Styles</div>`;
+  for (const [k, v] of Object.entries(d.own)) {
+    html += `<div class="inherit-prop"><span class="from-self">⬤ ${k}</span>: <span style="color:var(--text)">${v}</span></div>`;
+  }
+  html += `<div style="margin:0.6rem 0 0.4rem;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Inherited from Parent</div>`;
+  for (const [k, v] of Object.entries(d.inherited)) {
+    html += `<div class="inherit-prop"><span class="from-parent">↓ ${k}</span>: <span style="color:var(--text)">${v}</span></div>`;
+  }
+  html += `<div style="margin:0.6rem 0 0.4rem;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Non-Inherited (starts from initial)</div>`;
+  for (const [k, v] of Object.entries(d.nonInherited)) {
+    html += `<div class="inherit-prop"><span class="from-initial">✗ ${k}</span>: <span style="color:var(--muted)">${v}</span></div>`;
+  }
+  document.getElementById('inherit-info').innerHTML = html;
+}
+
+// ─── ACCORDION ───
+function toggleAcc(el) {
+  const header = el.querySelector('.acc-header');
+  const body = el.querySelector('.acc-body');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.acc-header').forEach(h => h.classList.remove('open'));
+  if (!isOpen) { body.classList.add('open'); header.classList.add('open'); }
+}
+
+// ─── PLAYGROUND ───
+const presets = {
+  cascade: `<style>
+  /* Who wins? The cascade decides! */
+  p { color: navy; }         /* Specificity 0-0-1 */
+  .intro { color: teal; }    /* Specificity 0-1-0 */
+  p { color: red; }          /* Also 0-0-1, but later */
+</style>
+<body style="font:16px Georgia;padding:1rem;background:#f9f9f9">
+  <p class="intro">I am the .intro paragraph. What color am I?</p>
+  <p>I am a plain paragraph. What color am I?</p>
+</body>`,
+  inherit: `<style>
+  body { color: darkslateblue; font-family: Georgia; }
+  .no-inherit { background: lightyellow; /* background does NOT inherit */ }
+</style>
+<body style="padding:1rem;background:#f9f9f9">
+  <div class="no-inherit">
+    <p>I inherit color from body! ✓</p>
+    <p>But my parent's background doesn't affect me... ✗</p>
+    <a href="#">Links override color by default!</a>
+  </div>
+</body>`,
+  specificity: `<style>
+  /* Try to make the box red — specificity battle! */
+  div { background: blue; }
+  .box { background: green; }   /* class > element */
+  #special { background: red; } /* id > class */
+</style>
+<body style="padding:1rem;background:#f0f0f0">
+  <div class="box" id="special" style="padding:2rem;color:white;border-radius:8px">
+    What color am I? (specificity: id wins)
+  </div>
+  <div class="box" style="padding:2rem;color:white;margin-top:1rem;border-radius:8px">
+    What about me? (class wins over element)
+  </div>
+</body>`,
+  keywords: `<style>
+  body { color: firebrick; }
+  .inherit-it  { color: inherit; }  /* takes parent's color */
+  .initial-it  { color: initial; }  /* resets to spec initial (black) */
+  .unset-it    { color: unset;   }  /* inherited → acts like inherit */
+  button { color: green; }
+  button.inherit-it { color: inherit; } /* forces body color onto button */
+</style>
+<body style="font:16px Georgia;padding:1rem;background:#f9f9f9">
+  <p>Body text (firebrick)</p>
+  <p class="inherit-it">inherit — I got firebrick from body</p>
+  <p class="initial-it">initial — reset to black (spec initial)</p>
+  <p class="unset-it">unset — color is inherited, so acts like inherit → firebrick</p>
+  <button>button default (green from UA override)</button>
+  <button class="inherit-it">button with inherit → firebrick from body</button>
+</body>`
+};
+function switchPreset(name) {
+  document.querySelectorAll('.pg-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('pg-code').value = presets[name];
+  updatePreview();
+}
+function updatePreview() {
+  const code = document.getElementById('pg-code').value;
+  const frame = document.getElementById('pg-frame');
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(code); doc.close();
+}
+switchPreset('cascade');
+
+// ─── QUIZ ───
+const questions = [
+  { q: "According to the CSS spec, what is the FIRST step the cascade algorithm performs?", opts: ["Sort by specificity", "Filter declarations by their origin", "Check for !important", "Find all applicable declarations"], ans: 3, exp: "The cascade first filters declarations — it collects all declared values for a property on a specific element. (§2)" },
+  { q: "A property has two declarations: one from a .class selector, one from an #id selector. Both are from the author stylesheet with no !important. Which wins?", opts: ["The .class rule, because classes are more flexible", "The #id rule, because IDs have higher specificity", "The later declaration always wins", "It depends on browser"], ans: 1, exp: "IDs have specificity (1,0,0) which beats class specificity (0,1,0). (§2.3)" },
+  { q: "What does the `inherit` keyword do, according to the spec?", opts: ["Resets property to browser default", "Forces the element to use its parent's computed value", "Copies the value from the previous sibling", "Removes the property entirely"], ans: 1, exp: "The `inherit` keyword explicitly sets the value to the inherited value from the parent element, even for non-inherited properties. (§3.2)" },
+  { q: "Which W3C spec status should you PREFER when learning CSS from primary sources?", opts: ["FPWD — most cutting edge", "WD — actively developed", "CR — almost finalized", "REC — official standard"], ans: 3, exp: "REC (Recommendation) is the official, stable W3C standard. It's the safest to learn from as it won't change. CR is acceptable if REC doesn't cover the feature." },
+  { q: "The `color` property is listed as `Inherited: yes` in the spec. What does this mean for a <span> inside a <p>?", opts: ["The <span> must explicitly set a color", "The <span> gets the <p>'s color automatically if none is set", "The <span> gets the body's color only", "Inherited properties cannot be overridden"], ans: 1, exp: "Inherited properties automatically pass their value to child elements when no explicit value is set. (§3.1)" },
+  { q: "What is the difference between `initial` and `unset`?", opts: ["`initial` uses browser defaults, `unset` uses spec defaults", "`unset` acts like `inherit` for inherited properties and like `initial` for non-inherited ones", "`initial` only works on root elements", "They are identical keywords"], ans: 1, exp: "Per spec §3.4: unset acts as `inherit` if the property is inherited, and as `initial` if it is not. `initial` always uses the property's spec-defined initial value." },
+  { q: "Two rules have the same origin, same specificity. Which wins according to the cascade spec?", opts: ["The first declared rule", "The last declared rule", "The shorter rule", "It's undefined — browser chooses"], ans: 1, exp: "Per spec §2.4: when all else is equal, the later (last) declaration wins. This is called 'order of appearance'." },
+  { q: "The `background` property is `Inherited: no` in the spec. What happens to a child element's background if only the parent has a background set?", opts: ["The child inherits the background", "The child's background is transparent (initial value)", "The child gets white background", "It depends on the browser"], ans: 1, exp: "Non-inherited properties default to their initial value, which for `background` is `transparent`. The parent's background shows through because the child is transparent, not because it was inherited." },
+  { q: "In the cascade algorithm, where does !important from an Author stylesheet rank?", opts: ["Below normal Author declarations", "Above normal Author declarations but below User-Agent !important", "Highest of all — above everything", "Same as normal Author declarations"], ans: 1, exp: "Per spec §2.2: !important author declarations outrank all normal declarations, but are outranked by !important user declarations (for accessibility) and !important UA declarations." },
+  { q: "The 'Computed Value' stage in value processing (spec §4) refers to:", opts: ["The value you typed in your CSS file", "The value after the cascade picks a winner", "The absolute value after percentages and relative units are resolved", "The pixel value actually painted on screen"], ans: 2, exp: "The Computed Value (spec §4) is the value after relative units (like %, em, vh) are resolved to absolute values. It's what you see in DevTools' 'Computed' panel." }
+];
+
+let currentQ = 0, score = 0, answered = new Array(questions.length).fill(null);
+
+function renderQuiz() {
+  if (currentQ >= questions.length) {
+    document.getElementById('quiz-container').innerHTML = `
+      <div class="score-board">
+        <div style="font-size:0.9rem;color:var(--muted);margin-bottom:0.5rem;">Your final score</div>
+        <div class="score-num">${score}/${questions.length}</div>
+        <div style="margin:1rem 0;color:var(--muted);">${score >= 8 ? '🏆 Excellent! You read the spec like a pro!' : score >= 5 ? '👍 Good progress! Review the sections you missed.' : '📚 Keep studying! Re-read the spec sections above.'}</div>
+        <button class="btn" onclick="restartQuiz()">↺ Retake Quiz</button>
+      </div>`;
+    return;
+  }
+  const q = questions[currentQ];
+  const dots = questions.map((_, i) => `<div class="qp-dot ${i < currentQ ? (answered[i] === questions[i].ans ? 'done' : 'wrong-done') : i === currentQ ? 'current' : ''}"></div>`).join('');
+  document.getElementById('quiz-container').innerHTML = `
+    <div class="quiz-progress">${dots}</div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;font-family:'JetBrains Mono',monospace">Question ${currentQ+1} of ${questions.length}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerQ(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+  `;
+}
+
+function answerQ(idx) {
+  const q = questions[currentQ];
+  answered[currentQ] = idx;
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById('quiz-fb');
+  if (idx === q.ans) {
+    score++;
+    opts[idx].classList.add('correct');
+    fb.className = 'quiz-feedback show good';
+    fb.innerHTML = `✓ Correct! — ${q.exp}`;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.className = 'quiz-feedback show bad';
+    fb.innerHTML = `✗ Not quite. The answer is <strong>${String.fromCharCode(65+q.ans)}</strong>. ${q.exp}`;
+  }
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'btn'; nextBtn.style.marginTop = '1rem';
+  nextBtn.textContent = currentQ < questions.length - 1 ? 'Next Question →' : 'See Results';
+  nextBtn.onclick = () => { currentQ++; renderQuiz(); };
+  fb.after(nextBtn);
+}
+
+function restartQuiz() {
+  currentQ = 0; score = 0;
+  answered = new Array(questions.length).fill(null);
+  renderQuiz();
+}
+renderQuiz();
+
+// ─── GLOSSARY ───
+const glossaryTerms = [
+  { term: 'Cascade', def: 'The algorithm that determines which CSS rule wins when multiple rules target the same property on the same element.' },
+  { term: 'Specificity', def: 'A numeric weight assigned to a selector. Higher specificity selectors win over lower ones in the cascade. Expressed as a tuple (A, B, C).' },
+  { term: 'Origin', def: 'Where a CSS declaration comes from. Three origins: User-Agent (browser default), User (accessibility), and Author (your stylesheet).' },
+  { term: 'Inheritance', def: 'The mechanism by which some CSS properties (like color, font-family) automatically pass their value to child elements.' },
+  { term: 'Inherited property', def: 'A CSS property listed as "Inherited: yes" in its spec definition. Its value flows down the DOM tree automatically.' },
+  { term: 'Initial value', def: 'The default value of a property as defined in the spec. Used when no value has been specified or inherited.' },
+  { term: 'Computed value', def: 'The value of a property after relative units are resolved to absolute values. What you see in browser DevTools "Computed" panel.' },
+  { term: 'Declared value', def: 'The raw value you wrote in your CSS rule, before the cascade processes it.' },
+  { term: 'Cascaded value', def: 'The single winning value that emerges after the cascade algorithm runs and picks one from all declared values.' },
+  { term: '!important', def: 'An annotation that elevates a declaration to a higher priority layer in the cascade, overriding normal cascade order.' },
+  { term: 'inherit keyword', def: 'Explicitly forces an element to take its parent\'s computed value for a property, even if that property is non-inherited.' },
+  { term: 'initial keyword', def: 'Resets a property to its spec-defined initial value, ignoring cascade and inheritance.' },
+  { term: 'unset keyword', def: 'Behaves as `inherit` for inherited properties and as `initial` for non-inherited properties.' },
+  { term: 'REC', def: 'W3C Recommendation — the official published standard. The most reliable source. Fully stable and implemented across browsers.' },
+  { term: 'CR (Candidate Recommendation)', def: 'A spec that is feature-complete and under implementation review. Very stable, safe to learn from. May still have minor changes.' },
+  { term: 'WD (Working Draft)', def: 'A spec in active development. Useful for learning future direction, but may change significantly before becoming a standard.' },
+  { term: 'Normative', def: 'Parts of a spec that contain binding rules — using words like MUST, SHALL, REQUIRED. Browsers must implement normative text.' },
+  { term: 'Informative', def: 'Non-binding parts of a spec — examples, notes, explanations. Helpful context but not required rules for implementors.' },
+  { term: 'User-Agent Stylesheet', def: 'The built-in CSS that browsers apply by default (e.g., h1 is bold, links are blue). Lowest priority in the cascade.' },
+  { term: 'Specificity tuple', def: 'The (A, B, C) representation of specificity where A=IDs, B=classes/attrs/pseudo-classes, C=elements. Compared left-to-right.' },
+];
+
+document.getElementById('glossary-grid').innerHTML = glossaryTerms.map(g => `
+  <div class="gloss-card">
+    <div class="gloss-term">${g.term}</div>
+    <div class="gloss-def">${g.def}</div>
+  </div>
+`).join('');
+
+// ─── NAV ACTIVE STATE ───
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === `#${current}`);
+  });
+});
+</script>
+</body>
+</html>
