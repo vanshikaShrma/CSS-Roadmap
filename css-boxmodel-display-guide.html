@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Box Model & Display — Zero to Advanced</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --paper: #f5f0e8;
+    --accent: #e85d26;
+    --accent2: #2657e8;
+    --accent3: #26b87a;
+    --muted: #7a7060;
+    --card: #fffdf8;
+    --border: #d8cebc;
+    --code-bg: #1a1714;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto;
+    border-bottom: 3px solid var(--accent);
+  }
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 0.85rem;
+    padding: 0.75rem 1.2rem;
+    background: var(--accent);
+    color: white;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #c8b89a;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+    border-right: 1px solid #2a2620;
+  }
+  nav a:hover, nav a.active { color: var(--paper); background: #2a2620; }
+
+  /* HERO */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 30px,
+      rgba(232,93,38,0.06) 30px, rgba(232,93,38,0.06) 31px
+    );
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    position: relative;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: #c8b89a;
+    margin-top: 1rem;
+    position: relative;
+  }
+  .level-pills {
+    display: flex; justify-content: center; gap: 0.5rem;
+    margin-top: 2rem; flex-wrap: wrap;
+    position: relative;
+  }
+  .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+  .pill-zero { background: #26b87a22; color: #26b87a; border: 1px solid #26b87a44; }
+  .pill-inter { background: #2657e822; color: #80a0ff; border: 1px solid #2657e844; }
+  .pill-adv { background: #e85d2622; color: #e85d26; border: 1px solid #e85d2644; }
+
+  /* MAIN LAYOUT */
+  main { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+
+  /* SECTION HEADERS */
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.15;
+  }
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 2rem 0 0.7rem;
+    color: var(--ink);
+  }
+  h3 .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    letter-spacing: 0.06em;
+  }
+  .tag-zero { background: #26b87a22; color: var(--accent3); border: 1px solid #26b87a33; }
+  .tag-inter { background: #2657e822; color: #6080e8; border: 1px solid #2657e833; }
+  .tag-adv { background: #e85d2622; color: var(--accent); border: 1px solid #e85d2633; }
+
+  section { margin-bottom: 4rem; scroll-margin-top: 4rem; }
+  p { margin-bottom: 1rem; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: white;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.92rem;
+  }
+  .callout.tip { border-color: var(--accent3); }
+  .callout.warning { border-color: #f0a020; }
+  .callout.concept { border-color: var(--accent2); }
+  .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    color: var(--accent);
+  }
+  .callout.tip .callout-label { color: var(--accent3); }
+  .callout.warning .callout-label { color: #f0a020; }
+  .callout.concept .callout-label { color: var(--accent2); }
+
+  /* CODE BLOCKS */
+  pre {
+    background: var(--code-bg);
+    color: #e8d8b8;
+    padding: 1.2rem 1.4rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 1.2rem 0;
+    border: 1px solid #2a2620;
+  }
+  code {
+    font-family: 'DM Mono', monospace;
+    background: #e8d8b8;
+    color: #2a1a0a;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  .kw { color: #e85d26; }
+  .val { color: #26b87a; }
+  .prop { color: #80c0ff; }
+  .cm { color: #6a5f50; font-style: italic; }
+  .str { color: #f0c050; }
+
+  /* VISUAL DEMOS */
+  .demo-box {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.2rem 0;
+  }
+  .demo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* BOX MODEL VISUAL */
+  .box-model-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .bm-margin {
+    background: #f5dfc0;
+    border: 2px dashed #d4a06a;
+    padding: 20px;
+    border-radius: 6px;
+    position: relative;
+  }
+  .bm-border {
+    background: #4a3a2a;
+    padding: 16px;
+    border-radius: 4px;
+    position: relative;
+  }
+  .bm-padding {
+    background: #c0d8c0;
+    padding: 20px;
+    border-radius: 2px;
+    position: relative;
+  }
+  .bm-content {
+    background: #6090c0;
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 12px 20px;
+    text-align: center;
+    border-radius: 2px;
+    min-width: 100px;
+  }
+  .bm-label {
+    position: absolute;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .bm-margin > .bm-label { top: 4px; left: 8px; color: #9a6a30; }
+  .bm-border > .bm-label { top: 3px; left: 6px; color: #c8b898; }
+  .bm-padding > .bm-label { top: 3px; left: 6px; color: #3a6a3a; }
+
+  /* DISPLAY TABLE */
+  .display-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 1.2rem 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .display-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+  }
+  .display-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .display-table tr:last-child td { border-bottom: none; }
+  .display-table tr:nth-child(even) td { background: #f5f0e0; }
+  .display-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  /* INLINE DEMO */
+  .inline-demo { display: flex; flex-wrap: wrap; gap: 0; align-items: baseline; }
+  .inline-demo .i-block {
+    display: inline;
+    background: #ffd0b0;
+    border: 1px solid #e87040;
+    padding: 2px 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+  }
+  .inline-demo .b-block {
+    display: block;
+    background: #b0d0ff;
+    border: 1px solid #4070d0;
+    padding: 4px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    width: 100%;
+  }
+
+  /* QUIZ / FLASHCARD SECTION */
+  #flashcards { margin-top: 2rem; }
+  .card-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .flashcard-container {
+    perspective: 1200px;
+    height: 240px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .flashcard {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    border: 2px solid var(--border);
+  }
+  .card-front {
+    background: var(--card);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .card-back {
+    background: var(--ink);
+    color: var(--paper);
+    transform: rotateY(180deg);
+    border-color: transparent;
+  }
+  .card-front .card-cat {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+  .card-front .card-q {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .card-front .tap-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--border);
+    margin-top: 1.5rem;
+    letter-spacing: 0.08em;
+  }
+  .card-back .card-a {
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #e8d8c0;
+  }
+  .card-back .card-a strong { color: var(--accent); }
+  .card-back .card-a code {
+    background: #2a2218;
+    color: #80c0ff;
+    padding: 0.1em 0.3em;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+  .card-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.2rem;
+    gap: 1rem;
+  }
+  .card-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.55rem 1.2rem;
+    border: 2px solid var(--ink);
+    background: white;
+    color: var(--ink);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .card-btn:hover { background: var(--ink); color: var(--paper); }
+  .card-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .card-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .card-btn.primary:hover { background: #c04010; border-color: #c04010; }
+
+  .category-filter {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .cat-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .cat-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* DIVIDER */
+  .chapter-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 3rem 0;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .chapter-divider::before, .chapter-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* VISUAL FORMATTING CONTEXT DEMO */
+  .fc-demo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .fc-block {
+    background: #ddeeff;
+    border: 2px solid #5599cc;
+    padding: 10px 14px;
+    margin: 4px 0;
+    border-radius: 3px;
+  }
+  .fc-inline {
+    display: inline;
+    background: #ffeedd;
+    border: 1.5px solid #dd9944;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin: 1px;
+  }
+  .fc-flex {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    background: #eeddff;
+    border: 2px solid #9955cc;
+    padding: 10px;
+    border-radius: 3px;
+  }
+  .fc-flex-item {
+    background: white;
+    border: 1px solid #9955cc;
+    padding: 6px 10px;
+    border-radius: 2px;
+  }
+  .fc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: #ddfff0;
+    border: 2px solid #33aa77;
+    padding: 10px;
+    border-radius: 3px;
+  }
+  .fc-grid-item {
+    background: white;
+    border: 1px solid #33aa77;
+    padding: 6px;
+    text-align: center;
+    border-radius: 2px;
+    font-size: 0.72rem;
+  }
+
+  /* visibility demo */
+  .vis-demo { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+  .vis-box {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    padding: 12px 18px;
+    border-radius: 4px;
+    background: #c0d0ff;
+    border: 1.5px solid #4060c0;
+    text-align: center;
+  }
+  .vis-box.vis-hidden { visibility: hidden; }
+  .vis-box.vis-none { display: none; }
+  .vis-gap { background: transparent; border: 2px dashed #aaa; color: #aaa; min-width: 80px; min-height: 44px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">CSS Deep Dive</div>
+  <a href="#box-model">Box Model</a>
+  <a href="#sizing">Sizing</a>
+  <a href="#display">Display</a>
+  <a href="#outer-inner">Outer/Inner</a>
+  <a href="#formatting-contexts">Contexts</a>
+  <a href="#visibility">Visibility</a>
+  <a href="#advanced">Advanced</a>
+  <a href="#flashcards">Flashcards</a>
+</nav>
+
+<div class="hero">
+  <h1>CSS <span>Box Model</span><br>& Display</h1>
+  <p>From zero to advanced — every layer explained</p>
+  <div class="level-pills">
+    <span class="pill pill-zero">● Zero (Foundation)</span>
+    <span class="pill pill-inter">● Intermediate</span>
+    <span class="pill pill-adv">● Advanced</span>
+  </div>
+</div>
+
+<main>
+
+<!-- ===== CHAPTER 1: BOX MODEL ===== -->
+<section id="box-model">
+  <div class="section-label">Chapter 1</div>
+  <h2>The Box Model</h2>
+
+  <h3>What is a Box? <span class="tag tag-zero">Zero</span></h3>
+  <p>Every element you put on a web page — a paragraph, a heading, an image, a link — becomes a rectangular <strong>box</strong>. CSS controls how these boxes look and how they sit next to each other.</p>
+  <p>Think of every HTML element as a parcel in a warehouse. It has contents inside, packing material around the content (padding), a cardboard wall (border), and empty space between it and other parcels (margin).</p>
+
+  <div class="demo-box">
+    <div class="demo-label">Visual: The Four Layers</div>
+    <div class="box-model-diagram">
+      <div class="bm-margin">
+        <span class="bm-label">MARGIN — space outside</span>
+        <div class="bm-border">
+          <span class="bm-label">BORDER — the wall</span>
+          <div class="bm-padding">
+            <span class="bm-label">PADDING — inner cushion</span>
+            <div class="bm-content">CONTENT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Four Parts <span class="tag tag-zero">Zero</span></h3>
+  <p><strong>Content</strong> — The actual text, image, or child elements. Width and height properties control this area by default.</p>
+  <p><strong>Padding</strong> — Transparent space between the content and the border. It inherits the background color.</p>
+  <p><strong>Border</strong> — A line (solid, dashed, dotted…) wrapping the padding + content area.</p>
+  <p><strong>Margin</strong> — Transparent space outside the border. Always transparent; shows the parent's background through it.</p>
+
+  <pre><code><span class="cm">/* The core box model properties */</span>
+<span class="prop">width</span>: <span class="val">200px</span>;
+<span class="prop">height</span>: <span class="val">100px</span>;
+
+<span class="prop">padding</span>: <span class="val">20px</span>;          <span class="cm">/* all sides */</span>
+<span class="prop">padding</span>: <span class="val">10px 20px</span>;     <span class="cm">/* top+bottom | left+right */</span>
+<span class="prop">padding</span>: <span class="val">5px 10px 15px 20px</span>; <span class="cm">/* top right bottom left */</span>
+
+<span class="prop">border</span>: <span class="val">2px solid #333</span>; <span class="cm">/* width | style | color */</span>
+
+<span class="prop">margin</span>: <span class="val">auto</span>;          <span class="cm">/* center horizontally */</span>
+<span class="prop">margin</span>: <span class="val">0</span>;             <span class="cm">/* remove margin */</span></code></pre>
+</section>
+
+<!-- ===== CHAPTER 2: BOX SIZING ===== -->
+<section id="sizing">
+  <div class="section-label">Chapter 2</div>
+  <h2>Box Sizing — The Most Common Gotcha</h2>
+
+  <h3>The Default Problem <span class="tag tag-zero">Zero</span></h3>
+  <p>By default, when you set <code>width: 300px</code>, the browser makes the <em>content area</em> 300px. Then padding and border get <em>added on top</em>. So the actual rendered size becomes wider than you expected.</p>
+
+  <pre><code><span class="cm">/* content-box (default — confusing!) */</span>
+<span class="kw">.box</span> {
+  <span class="prop">box-sizing</span>: <span class="val">content-box</span>; <span class="cm">/* default */</span>
+  <span class="prop">width</span>: <span class="val">300px</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+  <span class="prop">border</span>: <span class="val">2px solid</span>;
+  <span class="cm">/* Actual rendered width = 300 + 20+20 + 2+2 = 344px */</span>
+}
+
+<span class="cm">/* border-box (intuitive — use this!) */</span>
+<span class="kw">.box</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+  <span class="prop">width</span>: <span class="val">300px</span>;
+  <span class="prop">padding</span>: <span class="val">20px</span>;
+  <span class="prop">border</span>: <span class="val">2px solid</span>;
+  <span class="cm">/* Actual rendered width = 300px exactly */</span>
+}</code></pre>
+
+  <div class="callout tip">
+    <div class="callout-label">Pro Tip</div>
+    Every professional project starts with this reset. Apply it globally:
+    <pre style="margin-top:0.6rem"><code><span class="kw">*, *::before, *::after</span> {
+  <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}</code></pre>
+  </div>
+
+  <h3>Margin Collapse <span class="tag tag-inter">Intermediate</span></h3>
+  <p>When two vertical margins touch, they don't add together — they <em>collapse</em> into the larger of the two. This only happens with margins (not padding), and only vertically, and only in certain situations.</p>
+
+  <pre><code><span class="kw">h1</span> { <span class="prop">margin-bottom</span>: <span class="val">40px</span>; }
+<span class="kw">p</span>  { <span class="prop">margin-top</span>: <span class="val">20px</span>; }
+<span class="cm">/* Gap between h1 and p = 40px (not 60px!) */</span>
+
+<span class="cm">/* Margin collapse does NOT happen across formatting context boundaries */</span>
+<span class="cm">/* Adding overflow:hidden or display:flex to parent prevents collapse */</span></code></pre>
+
+  <div class="callout warning">
+    <div class="callout-label">Watch Out</div>
+    Margin collapse only happens between block-level boxes in the same block formatting context. It does NOT happen between flex children, grid children, or elements separated by padding or border.
+  </div>
+</section>
+
+<!-- ===== CHAPTER 3: DISPLAY ===== -->
+<section id="display">
+  <div class="section-label">Chapter 3</div>
+  <h2>The <code>display</code> Property</h2>
+
+  <h3>What display Does <span class="tag tag-zero">Zero</span></h3>
+  <p>The <code>display</code> property is the master switch for how an element generates boxes. It controls two things simultaneously:</p>
+  <p><strong>1. How the element participates in its parent's layout</strong> (its outer display type)</p>
+  <p><strong>2. How it lays out its own children</strong> (its inner display type)</p>
+
+  <div class="callout concept">
+    <div class="callout-label">Core Concept</div>
+    Modern CSS spec describes every display value as a combination of an <strong>outer</strong> type (<code>block</code> / <code>inline</code>) and an <strong>inner</strong> type (<code>flow</code> / <code>flex</code> / <code>grid</code> / <code>table</code>). The shorthand keywords you know are just precomposed pairs.
+  </div>
+
+  <h3>block vs inline <span class="tag tag-zero">Zero</span></h3>
+
+  <div class="demo-box">
+    <div class="demo-label">Block elements stack vertically; inline elements flow with text</div>
+    <div class="fc-demo">
+      <div class="fc-block">block box — takes full width, starts new line</div>
+      <div style="margin: 6px 0;">
+        <span class="fc-inline">inline</span>
+        <span class="fc-inline">elements</span>
+        <span class="fc-inline">flow</span>
+        <span class="fc-inline">together</span>
+        like words in a sentence.
+      </div>
+      <div class="fc-block">another block box below</div>
+    </div>
+  </div>
+
+  <pre><code><span class="cm">/* Block: div, p, h1-h6, ul, li, section... */</span>
+<span class="kw">div</span> {
+  <span class="prop">display</span>: <span class="val">block</span>;
+  <span class="cm">/* width defaults to 100% of parent */</span>
+  <span class="cm">/* height fits content */</span>
+  <span class="cm">/* width/height/margin/padding all work */</span>
+}
+
+<span class="cm">/* Inline: span, a, strong, em, img... */</span>
+<span class="kw">span</span> {
+  <span class="prop">display</span>: <span class="val">inline</span>;
+  <span class="cm">/* width and height are IGNORED */</span>
+  <span class="cm">/* top/bottom margins are IGNORED */</span>
+  <span class="cm">/* vertical padding doesn't push other elements */</span>
+}</code></pre>
+
+  <h3>inline-block <span class="tag tag-inter">Intermediate</span></h3>
+  <p>The hybrid: flows inline with text <em>but</em> respects <code>width</code>, <code>height</code>, and vertical margin like a block. In modern spec terms this is <code>inline flow-root</code>.</p>
+  <pre><code><span class="kw">.badge</span> {
+  <span class="prop">display</span>: <span class="val">inline-block</span>;
+  <span class="prop">width</span>: <span class="val">80px</span>;
+  <span class="prop">height</span>: <span class="val">24px</span>;
+  <span class="prop">padding</span>: <span class="val">2px 8px</span>;
+  <span class="cm">/* Now width/height work, but it still sits in text flow */</span>
+}</code></pre>
+
+  <h3>none vs contents <span class="tag tag-inter">Intermediate</span></h3>
+  <pre><code><span class="prop">display</span>: <span class="val">none</span>;     <span class="cm">/* Element AND children disappear from layout entirely */</span>
+<span class="prop">display</span>: <span class="val">contents</span>; <span class="cm">/* Element's OWN box vanishes, but children remain */</span>
+<span class="cm">/* 'contents' is like removing only the wrapper, not the contents */</span>
+<span class="cm">/* Accessibility note: display:none removes from accessibility tree too */</span></code></pre>
+</section>
+
+<!-- ===== CHAPTER 4: OUTER/INNER ===== -->
+<section id="outer-inner">
+  <div class="section-label">Chapter 4</div>
+  <h2>Outer & Inner Display Types</h2>
+
+  <h3>The Two-Keyword Model <span class="tag tag-inter">Intermediate</span></h3>
+  <p>According to the CSS Display Module Level 3, every non-special display value has two parts. The old single keywords are shorthand for these pairs:</p>
+
+  <table class="display-table">
+    <thead>
+      <tr>
+        <th>Shorthand</th>
+        <th>Full form</th>
+        <th>Outer (how it fits in parent)</th>
+        <th>Inner (how it lays out children)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>block</td><td>block flow</td><td>block-level</td><td>flow (normal)</td></tr>
+      <tr><td>inline</td><td>inline flow</td><td>inline-level</td><td>flow (normal)</td></tr>
+      <tr><td>inline-block</td><td>inline flow-root</td><td>inline-level</td><td>new block formatting context</td></tr>
+      <tr><td>flex</td><td>block flex</td><td>block-level</td><td>flex formatting context</td></tr>
+      <tr><td>inline-flex</td><td>inline flex</td><td>inline-level</td><td>flex formatting context</td></tr>
+      <tr><td>grid</td><td>block grid</td><td>block-level</td><td>grid formatting context</td></tr>
+      <tr><td>inline-grid</td><td>inline grid</td><td>inline-level</td><td>grid formatting context</td></tr>
+      <tr><td>table</td><td>block table</td><td>block-level</td><td>table formatting context</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout concept">
+    <div class="callout-label">Mental Model</div>
+    <strong>Outer</strong> type answers: "How does THIS element relate to its siblings?"<br>
+    <strong>Inner</strong> type answers: "How do MY CHILDREN get arranged inside me?"
+  </div>
+
+  <h3>flow-root — The Hidden Gem <span class="tag tag-adv">Advanced</span></h3>
+  <p><code>display: flow-root</code> makes an element a block-level box AND forces it to be a block formatting context (BFC) root. This is the clean, explicit way to contain floats and prevent margin collapse, instead of the old hacks.</p>
+  <pre><code><span class="cm">/* Old hacks to create a BFC: */</span>
+<span class="prop">overflow</span>: <span class="val">hidden</span>; <span class="cm">/* works but clips content */</span>
+<span class="prop">float</span>: <span class="val">left</span>;      <span class="cm">/* changes layout behaviour */</span>
+
+<span class="cm">/* Modern, explicit approach: */</span>
+<span class="kw">.container</span> {
+  <span class="prop">display</span>: <span class="val">flow-root</span>;
+  <span class="cm">/* Now contains floats, prevents margin collapse */</span>
+  <span class="cm">/* No side effects! */</span>
+}</code></pre>
+</section>
+
+<!-- ===== CHAPTER 5: FORMATTING CONTEXTS ===== -->
+<section id="formatting-contexts">
+  <div class="section-label">Chapter 5</div>
+  <h2>Formatting Contexts</h2>
+
+  <h3>What is a Formatting Context? <span class="tag tag-inter">Intermediate</span></h3>
+  <p>A formatting context is the "room" in which boxes are arranged. The rules for how children are positioned depend entirely on <em>which room they're in</em>. Different rooms have different rules.</p>
+
+  <div class="demo-box">
+    <div class="demo-label">Four main formatting contexts</div>
+    <div class="fc-demo" style="display: flex; flex-direction: column; gap: 10px;">
+
+      <div class="fc-block" style="background:#ddeeff; border-color:#4488cc;">
+        <strong style="font-size:0.72rem; display:block; margin-bottom:4px; color:#224466;">BLOCK FORMATTING CONTEXT (BFC)</strong>
+        Children stack vertically. Floats are contained. Margins can collapse.
+      </div>
+
+      <div style="background:#fff8ee; border: 2px solid #cc8833; padding: 10px; border-radius:3px;">
+        <strong style="font-size:0.72rem; display:block; margin-bottom:4px; color:#884400;">INLINE FORMATTING CONTEXT (IFC)</strong>
+        <span class="fc-inline">Words</span> <span class="fc-inline">and</span> <span class="fc-inline">inline</span> <span class="fc-inline">boxes</span> wrap like text — left to right, then down.
+      </div>
+
+      <div class="fc-flex">
+        <strong style="font-size:0.72rem; display:block; width:100%; margin-bottom:4px; color:#553399;">FLEX FORMATTING CONTEXT</strong>
+        <div class="fc-flex-item">flex item 1</div>
+        <div class="fc-flex-item">flex item 2</div>
+        <div class="fc-flex-item">flex item 3</div>
+      </div>
+
+      <div class="fc-grid">
+        <strong style="font-size:0.72rem; grid-column: 1/-1; color:#225544; margin-bottom:2px;">GRID FORMATTING CONTEXT</strong>
+        <div class="fc-grid-item">1</div>
+        <div class="fc-grid-item">2</div>
+        <div class="fc-grid-item">3</div>
+        <div class="fc-grid-item">4</div>
+        <div class="fc-grid-item">5</div>
+        <div class="fc-grid-item">6</div>
+      </div>
+
+    </div>
+  </div>
+
+  <h3>Independent vs. Shared Contexts <span class="tag tag-adv">Advanced</span></h3>
+  <p>When a box establishes an <strong>independent</strong> formatting context, its interior is isolated. Floats from outside can't intrude. Margins don't collapse across the boundary. The box grows to contain its floated children.</p>
+  <p>This is why adding <code>overflow: hidden</code> to a parent "magically" makes it contain floats — it creates a new independent formatting context as a side effect.</p>
+
+  <pre><code><span class="cm">/* These all create an independent formatting context: */</span>
+<span class="prop">display</span>: <span class="val">flow-root</span>  <span class="cm">/* cleanest way */</span>
+<span class="prop">display</span>: <span class="val">flex</span>       <span class="cm">/* flex container */</span>
+<span class="prop">display</span>: <span class="val">grid</span>       <span class="cm">/* grid container */</span>
+<span class="prop">overflow</span>: <span class="val">hidden</span>   <span class="cm">/* side effect: creates BFC */</span>
+<span class="prop">position</span>: <span class="val">absolute</span> <span class="cm">/* also creates one */</span>
+<span class="prop">float</span>: <span class="val">left/right</span>  <span class="cm">/* also creates one */</span></code></pre>
+</section>
+
+<!-- ===== CHAPTER 6: VISIBILITY ===== -->
+<section id="visibility">
+  <div class="section-label">Chapter 6</div>
+  <h2>Visibility vs. Display</h2>
+
+  <h3>Three Ways to Hide <span class="tag tag-inter">Intermediate</span></h3>
+  <p>These three techniques all make something "invisible" but in very different ways:</p>
+
+  <div class="demo-box">
+    <div class="demo-label">A B [hidden] C — notice how space is handled differently</div>
+    <div class="vis-demo" style="flex-wrap:nowrap; gap:0.5rem;">
+      <div class="vis-box">A</div>
+      <div class="vis-box">B</div>
+      <div class="vis-box vis-hidden">display:none (no gap)</div>
+      <div class="vis-box">C</div>
+    </div>
+    <br>
+    <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted);">
+      ↑ visibility:hidden: box C still has a visible gap where the hidden element sits
+    </div>
+    <div class="vis-demo" style="flex-wrap:nowrap; gap:0.5rem; margin-top:0.8rem;">
+      <div class="vis-box">A</div>
+      <div class="vis-box">B</div>
+      <div class="vis-box" style="display:none">hidden</div>
+      <div class="vis-box">C</div>
+    </div>
+    <div style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:0.3rem;">
+      ↑ display:none: no gap — element is fully removed from layout
+    </div>
+  </div>
+
+  <table class="display-table" style="margin-top:1.2rem;">
+    <thead>
+      <tr><th>Method</th><th>Visual</th><th>Layout space?</th><th>Accessible?</th><th>Children can override?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>display: none</td><td>Hidden</td><td>No — removed</td><td>No</td><td>No</td></tr>
+      <tr><td>visibility: hidden</td><td>Hidden</td><td>Yes — space kept</td><td>No</td><td>Yes (visibility: visible)</td></tr>
+      <tr><td>opacity: 0</td><td>Hidden</td><td>Yes — space kept</td><td>Yes</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <div class="callout-label">Key insight</div>
+    <code>visibility: hidden</code> is uniquely useful when you need to hide something but don't want the page to reflow (like a spoiler that reveals on click). <code>visibility: visible</code> on a child can make it peek through a hidden parent — only <code>visibility</code> allows this override pattern.
+  </div>
+</section>
+
+<!-- ===== CHAPTER 7: ADVANCED ===== -->
+<section id="advanced">
+  <div class="section-label">Chapter 7</div>
+  <h2>Advanced Topics</h2>
+
+  <h3>Blockification & Inlinification <span class="tag tag-adv">Advanced</span></h3>
+  <p>Certain CSS situations force a box to change its outer display type automatically — this is called <em>blockification</em> or <em>inlinification</em>:</p>
+  <pre><code><span class="cm">/* Blockification — forced outer type becomes block: */</span>
+<span class="prop">position</span>: <span class="val">absolute</span> <span class="cm">/* or fixed */</span>
+<span class="prop">float</span>: <span class="val">left</span>         <span class="cm">/* or right */</span>
+<span class="cm">/* being a flex/grid child */</span>
+
+<span class="cm">/* So this: */</span>
+<span class="kw">span</span> { <span class="prop">position</span>: <span class="val">absolute</span>; <span class="prop">width</span>: <span class="val">100px</span>; }
+<span class="cm">/* is effectively treated as: */</span>
+<span class="kw">span</span> { <span class="prop">display</span>: <span class="val">block</span>; <span class="prop">position</span>: <span class="val">absolute</span>; <span class="prop">width</span>: <span class="val">100px</span>; }
+<span class="cm">/* width now works even though span is normally inline! */</span></code></pre>
+
+  <h3>The order Property <span class="tag tag-inter">Intermediate</span></h3>
+  <p>Inside flex and grid containers, the <code>order</code> property changes <em>visual</em> order without changing the DOM (source) order. Use only for spatial reordering, not logical content reordering, because screen readers and keyboard navigation follow DOM order.</p>
+  <pre><code><span class="kw">.container</span> { <span class="prop">display</span>: <span class="val">flex</span>; }
+
+<span class="kw">.item-a</span> { <span class="prop">order</span>: <span class="val">2</span>; } <span class="cm">/* appears third */</span>
+<span class="kw">.item-b</span> { <span class="prop">order</span>: <span class="val">1</span>; } <span class="cm">/* appears second */</span>
+<span class="kw">.item-c</span> { <span class="prop">order</span>: <span class="val">0</span>; } <span class="cm">/* appears first (default is 0) */</span></code></pre>
+
+  <h3>The Root Element's Box <span class="tag tag-adv">Advanced</span></h3>
+  <p>The <code>&lt;html&gt;</code> element's display is always <em>blockified</em> — regardless of what you set. Its box establishes the initial containing block, which is the baseline for all percentage widths, absolute positioning, and viewport-unit calculations.</p>
+
+  <h3>run-in Layout <span class="tag tag-adv">Advanced</span></h3>
+  <p><code>display: run-in</code> is a special, rarely-implemented value where an element merges into the following block, becoming inline content at the start of that block. Think dictionary definitions where the term is inline with its explanation.</p>
+  <pre><code><span class="kw">dt</span> { <span class="prop">display</span>: <span class="val">run-in</span>; }
+<span class="cm">/* dt "runs into" the following dd, like: */</span>
+<span class="cm">/* "term: definition text here" — all on one line */</span>
+<span class="cm">/* ⚠️ Browser support is limited — use with care */</span></code></pre>
+
+  <h3>Anonymous Boxes <span class="tag tag-adv">Advanced</span></h3>
+  <p>When the DOM structure doesn't match what a layout model needs, browsers silently insert <em>anonymous boxes</em>. These have no corresponding element — the browser generates them as structural fix-ups.</p>
+  <pre><code><span class="cm">/* You write: */</span>
+<span class="kw">&lt;div style="display:table"&gt;
+  &lt;div style="display:table-cell"&gt;Cell&lt;/div&gt;
+&lt;/div&gt;</span>
+
+<span class="cm">/* Browser generates this structure internally: */</span>
+<span class="cm">/* table → [anonymous table-row-group] → [anonymous table-row] → table-cell */</span></code></pre>
+
+  <div class="callout concept">
+    <div class="callout-label">Advanced Insight</div>
+    Anonymous boxes inherit CSS properties through their position in the <em>box tree</em>, not the element tree. This distinction matters when debugging why a CSS property seems to "jump" to an unexpected element.
+  </div>
+</section>
+
+<!-- ===== FLASHCARDS ===== -->
+<section id="flashcards">
+  <div class="section-label">Revision</div>
+  <h2>Flashcards</h2>
+  <p>Click any card to reveal the answer. Use the category filters to focus your revision.</p>
+
+  <div class="category-filter" id="catFilter">
+    <button class="cat-btn active" data-cat="all">All Cards</button>
+    <button class="cat-btn" data-cat="box-model">Box Model</button>
+    <button class="cat-btn" data-cat="display">Display</button>
+    <button class="cat-btn" data-cat="contexts">Formatting Contexts</button>
+    <button class="cat-btn" data-cat="advanced">Advanced</button>
+  </div>
+
+  <div class="card-counter">
+    <span id="cardNum">Card 1 of 20</span>
+    <span id="cardCat" style="color:var(--accent)">Box Model</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
+
+  <div class="flashcard-container" id="cardContainer" onclick="flipCard()">
+    <div class="flashcard" id="flashcard">
+      <div class="card-face card-front">
+        <div class="card-cat" id="cardCatLabel">BOX MODEL</div>
+        <div class="card-q" id="cardQuestion">Loading...</div>
+        <div class="tap-hint">↩ tap to reveal</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-a" id="cardAnswer">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-nav">
+    <button class="card-btn" id="prevBtn" onclick="prevCard()" disabled>← Prev</button>
+    <button class="card-btn primary" onclick="flipCard()">Flip Card</button>
+    <button class="card-btn" id="nextBtn" onclick="nextCard()">Next →</button>
+  </div>
+</section>
+
+</main>
+
+<script>
+const ALL_CARDS = [
+  // Box Model
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "What are the four layers of the CSS box model, from outermost to innermost?",
+    a: "From outermost to innermost: <strong>Margin → Border → Padding → Content</strong>. Each layer stacks around the one inside it." },
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "What is the difference between padding and margin?",
+    a: "<strong>Padding</strong> is space inside the border — it shows the element's background. <strong>Margin</strong> is space outside the border — it's always transparent and shows the parent's background." },
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "With box-sizing: content-box, an element has width:200px, padding:20px, border:2px. What is its actual rendered width?",
+    a: "<strong>244px</strong>. Content-box adds padding and border ON TOP of the declared width: 200 + 20 + 20 + 2 + 2 = 244px." },
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "With box-sizing: border-box, same element — width:200px, padding:20px, border:2px. What is its actual rendered width?",
+    a: "<strong>200px exactly</strong>. Border-box includes padding and border INSIDE the declared width. The content shrinks to 200 − 40 − 4 = 156px." },
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "What is margin collapse and when does it happen?",
+    a: "When two vertical margins touch, they <strong>collapse</strong> into the larger of the two instead of adding. It only happens: (1) between block-level elements, (2) vertically, (3) in the same block formatting context." },
+  { cat: "box-model", catLabel: "BOX MODEL",
+    q: "What value of margin centers a block element horizontally?",
+    a: "<code>margin: auto</code> on left and right (e.g., <code>margin: 0 auto</code>) centers a block element, but only when it has an explicit width set." },
+
+  // Display
+  { cat: "display", catLabel: "DISPLAY",
+    q: "What two things does the display property control simultaneously?",
+    a: "1. <strong>Outer display type</strong> — how the element participates in its parent's layout (block vs inline). 2. <strong>Inner display type</strong> — what kind of formatting context the element creates for its children." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "Can you set width and height on an inline element?",
+    a: "<strong>No.</strong> Inline elements ignore <code>width</code>, <code>height</code>, and top/bottom margins. Use <code>display: inline-block</code> or <code>display: block</code> if you need to control sizing." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "What is display: inline-block in modern CSS spec terms?",
+    a: "It computes to <strong>inline flow-root</strong>. Outer type is <em>inline</em> (sits in text flow), inner type is <em>flow-root</em> (creates a new block formatting context, so width/height/margin work properly)." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "What is the difference between display: none and display: contents?",
+    a: "<code>display: none</code> removes the element AND its children from layout entirely. <code>display: contents</code> removes only the element's OWN box — its children remain visible and participate in layout as if the wrapper never existed." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "List the six inner display layout models defined in CSS Display Level 3.",
+    a: "<code>flow</code>, <code>flow-root</code>, <code>table</code>, <code>flex</code>, <code>grid</code>, <code>ruby</code>. Each creates a different type of formatting context for the element's children." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "What does display: flex do to the children of a flex container?",
+    a: "It <strong>blockifies</strong> the children's outer display type — they all behave as block-level boxes for sizing purposes. Their original display value (inline, span, etc.) is overridden within the flex context." },
+  { cat: "display", catLabel: "DISPLAY",
+    q: "What is the difference between visibility: hidden and display: none?",
+    a: "<code>visibility: hidden</code> hides the element but <strong>keeps its layout space</strong>. <code>display: none</code> removes it from layout entirely, collapsing the space. Also, a child with <code>visibility: visible</code> can 'see through' a hidden parent — not possible with <code>display: none</code>." },
+
+  // Formatting Contexts
+  { cat: "contexts", catLabel: "FORMATTING CONTEXTS",
+    q: "What is a formatting context?",
+    a: "A formatting context is the <strong>layout environment</strong> in which a set of boxes is arranged. Different contexts have different rules — e.g., a block formatting context (BFC) stacks children vertically, while a flex formatting context lays them out according to flexbox rules." },
+  { cat: "contexts", catLabel: "FORMATTING CONTEXTS",
+    q: "Name four things that create a new Block Formatting Context (BFC).",
+    a: "<code>display: flow-root</code>, <code>display: flex</code> or <code>grid</code> (on the container), <code>overflow: hidden/auto/scroll</code>, <code>position: absolute/fixed</code>, and <code>float: left/right</code> all create a new BFC." },
+  { cat: "contexts", catLabel: "FORMATTING CONTEXTS",
+    q: "Why does overflow: hidden on a parent 'contain' floated children?",
+    a: "It creates a new <strong>independent block formatting context</strong> as a side effect. An independent formatting context must grow to fully contain its floated descendants — so the parent visually wraps around them." },
+  { cat: "contexts", catLabel: "FORMATTING CONTEXTS",
+    q: "What is display: flow-root and why is it preferred over overflow: hidden for containing floats?",
+    a: "<code>display: flow-root</code> <strong>explicitly</strong> creates a new BFC with no side effects. <code>overflow: hidden</code> works but clips content that overflows. <code>flow-root</code> was created specifically for this use case — no clipping, no layout changes." },
+
+  // Advanced
+  { cat: "advanced", catLabel: "ADVANCED",
+    q: "What is blockification and when does it occur?",
+    a: "<strong>Blockification</strong> is when CSS automatically changes an element's outer display type to block. It occurs when: (1) an element is absolutely or fixedly positioned, (2) it's floated, or (3) it's a direct child of a flex or grid container." },
+  { cat: "advanced", catLabel: "ADVANCED",
+    q: "What are anonymous boxes and why does the browser create them?",
+    a: "Anonymous boxes are boxes <strong>not associated with any element</strong> — the browser silently generates them when the box tree needs a specific structure that the HTML doesn't provide. Example: placing a <code>table-cell</code> inside a plain div causes the browser to generate anonymous table, row-group, and row boxes around it." },
+  { cat: "advanced", catLabel: "ADVANCED",
+    q: "What does the order property do and what is its key accessibility constraint?",
+    a: "The <code>order</code> property changes the <strong>visual order</strong> of flex/grid items without changing DOM order. The constraint: screen readers and keyboard navigation follow DOM order, not visual order. Authors must only use it for spatial, not logical, reordering." },
+  { cat: "advanced", catLabel: "ADVANCED",
+    q: "Can you ever have display: contents on the root element (&lt;html&gt;)?",
+    a: "<strong>No.</strong> On the root element, <code>display: contents</code> computes to <code>display: block</code>. The root element's display type is always blockified and it always establishes an independent formatting context — it's a special case in the spec." },
+];
+
+let currentCards = [...ALL_CARDS];
+let currentIndex = 0;
+let isFlipped = false;
+
+function renderCard() {
+  const card = currentCards[currentIndex];
+  document.getElementById('cardCatLabel').textContent = card.catLabel;
+  document.getElementById('cardQuestion').textContent = card.q;
+  document.getElementById('cardAnswer').innerHTML = card.a;
+  document.getElementById('cardCat').textContent = card.catLabel;
+  document.getElementById('cardNum').textContent = `Card ${currentIndex + 1} of ${currentCards.length}`;
+  document.getElementById('progressFill').style.width = ((currentIndex + 1) / currentCards.length * 100) + '%';
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex === currentCards.length - 1;
+  isFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  if (currentIndex < currentCards.length - 1) {
+    currentIndex++;
+    renderCard();
+  }
+}
+
+function prevCard() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCard();
+  }
+}
+
+// Category filter
+document.getElementById('catFilter').addEventListener('click', (e) => {
+  if (!e.target.classList.contains('cat-btn')) return;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  const cat = e.target.dataset.cat;
+  currentCards = cat === 'all' ? [...ALL_CARDS] : ALL_CARDS.filter(c => c.cat === cat);
+  currentIndex = 0;
+  renderCard();
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') nextCard();
+  if (e.key === 'ArrowLeft') prevCard();
+  if (e.key === ' ') { e.preventDefault(); flipCard(); }
+});
+
+renderCard();
+</script>
+</body>
+</html>
