@@ -532,6 +532,269 @@
     font-size: 0.72rem;
   }
 
+  /* ===== INTERACTIVE PLAYGROUNDS ===== */
+
+  /* Box sizing lab */
+  .lab {
+    background: #0f0e0d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid #2a2620;
+  }
+  .lab-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #e85d26;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .lab-title::before { content: '⬡'; font-size: 0.8rem; }
+
+  .lab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  @media (max-width: 600px) { .lab-grid { grid-template-columns: 1fr; } }
+
+  .lab-panel {
+    background: #1a1714;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #2a2620;
+  }
+  .lab-panel-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2a2620;
+  }
+  .lab-panel-title.cb { color: #ff8855; }
+  .lab-panel-title.bb { color: #55cc88; }
+
+  /* Sliders */
+  .slider-row {
+    display: flex; align-items: center; gap: 0.7rem;
+    margin-bottom: 0.6rem;
+  }
+  .slider-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #a09080;
+    width: 52px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .slider-label.m { color: #f5a050; }
+  .slider-label.b { color: #c8a080; }
+  .slider-label.p { color: #70c878; }
+  .slider-label.w { color: #6090d8; }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    background: #3a3028;
+  }
+  input[type=range].m { accent-color: #f5a050; }
+  input[type=range].b { accent-color: #c8a080; }
+  input[type=range].p { accent-color: #70c878; }
+  input[type=range].w { accent-color: #6090d8; }
+  .slider-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #e8d8b8;
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Canvas area for the box model viz */
+  .viz-area {
+    margin-top: 1rem;
+    border: 1px solid #2a2620;
+    border-radius: 6px;
+    background: #13110f;
+    position: relative;
+    overflow: hidden;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SVG-based box viz */
+  .box-viz-svg { width: 100%; height: 100%; }
+
+  /* Stats readout */
+  .stats-row {
+    display: flex; flex-wrap: wrap; gap: 0.4rem;
+    margin-top: 0.8rem;
+  }
+  .stat-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .stat-chip.declared { background: #6090d822; color: #6090d8; border: 1px solid #6090d833; }
+  .stat-chip.rendered { background: #ff885522; color: #ff8855; border: 1px solid #ff885533; }
+  .stat-chip.rendered.ok { background: #55cc8822; color: #55cc88; border: 1px solid #55cc8833; }
+
+  /* Shared sliders panel */
+  .shared-sliders {
+    background: #1a1714;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #2a2620;
+    margin-bottom: 1rem;
+  }
+  .shared-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a09080;
+    margin-bottom: 0.8rem;
+  }
+
+  /* Side-by-side comparison canvas */
+  .compare-viz {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  @media (max-width:600px) { .compare-viz { grid-template-columns: 1fr; } }
+  .compare-panel {
+    background: #13110f;
+    border-radius: 8px;
+    border: 1px solid #2a2620;
+    padding: 0.8rem;
+  }
+  .compare-panel-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+  .compare-panel-title.cb { color: #ff8855; }
+  .compare-panel-title.bb { color: #55cc88; }
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  canvas.box-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .compare-stats {
+    margin-top: 0.6rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    line-height: 1.8;
+    color: #a09080;
+  }
+  .compare-stats .hl { font-weight: 600; }
+  .compare-stats .hl.cb { color: #ff8855; }
+  .compare-stats .hl.bb { color: #55cc88; }
+
+  /* Margin collapse visualizer */
+  .collapse-viz {
+    background: #13110f;
+    border-radius: 8px;
+    border: 1px solid #2a2620;
+    padding: 1rem;
+    margin-top: 0.8rem;
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+  }
+  .collapse-canvas { width: 100%; height: 100%; }
+
+  /* Display playground */
+  .display-lab {
+    background: #0f0e0d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid #2a2620;
+  }
+  .display-buttons {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .disp-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 5px;
+    border: 1.5px solid #3a3028;
+    background: #1a1714;
+    color: #a09080;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .disp-btn:hover { border-color: #e85d26; color: #e8d8b8; }
+  .disp-btn.active { background: #e85d26; color: white; border-color: #e85d26; }
+  .display-arena {
+    background: #1a1714;
+    border-radius: 8px;
+    border: 2px dashed #3a3028;
+    padding: 1rem;
+    min-height: 160px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .arena-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: #3a3028;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    position: absolute;
+    top: 6px; left: 8px;
+  }
+  .arena-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 8px 14px;
+    border-radius: 3px;
+    text-align: center;
+    transition: all 0.3s;
+    background: #2a2218;
+    border: 1.5px solid #4a3a28;
+    color: #e8d8b8;
+  }
+  .display-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: #a09080;
+    margin-top: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    background: #1a1714;
+    border-radius: 6px;
+    line-height: 1.6;
+  }
+  .display-desc strong { color: #e8d8b8; }
+
   /* visibility demo */
   .vis-demo { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
   .vis-box {
@@ -667,6 +930,76 @@
     <div class="callout-label">Watch Out</div>
     Margin collapse only happens between block-level boxes in the same block formatting context. It does NOT happen between flex children, grid children, or elements separated by padding or border.
   </div>
+
+  <!-- ===== INTERACTIVE LAB 1: content-box vs border-box ===== -->
+  <div class="lab">
+    <div class="lab-title">Interactive Lab — Drag the sliders and watch boxes change live</div>
+
+    <div class="shared-sliders">
+      <div class="shared-title">Shared settings (same values applied to both boxes)</div>
+      <div class="slider-row">
+        <span class="slider-label w">Width</span>
+        <input type="range" class="w" id="s-width" min="80" max="240" value="160">
+        <span class="slider-val" id="v-width">160</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#6090d8">px</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label p">Padding</span>
+        <input type="range" class="p" id="s-padding" min="0" max="50" value="20">
+        <span class="slider-val" id="v-padding">20</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#70c878">px</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label b">Border</span>
+        <input type="range" class="b" id="s-border" min="0" max="20" value="4">
+        <span class="slider-val" id="v-border">4</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#c8a080">px</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label m">Margin</span>
+        <input type="range" class="m" id="s-margin" min="0" max="40" value="16">
+        <span class="slider-val" id="v-margin">16</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#f5a050">px</span>
+      </div>
+    </div>
+
+    <div class="compare-viz">
+      <div class="compare-panel">
+        <div class="compare-panel-title cb">content-box (default)</div>
+        <div class="canvas-wrap"><canvas class="box-canvas" id="canvas-cb"></canvas></div>
+        <div class="compare-stats" id="stats-cb">—</div>
+      </div>
+      <div class="compare-panel">
+        <div class="compare-panel-title bb">border-box</div>
+        <div class="canvas-wrap"><canvas class="box-canvas" id="canvas-bb"></canvas></div>
+        <div class="compare-stats" id="stats-bb">—</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem; font-family:'DM Mono',monospace; font-size:0.65rem; color:#7a6a58; line-height:1.8; padding:0.8rem; background:#1a1714; border-radius:6px;">
+      🟠 <span style="color:#f5a050">Margin</span> &nbsp;|&nbsp; 🟤 <span style="color:#c8a080">Border</span> &nbsp;|&nbsp; 🟢 <span style="color:#70c878">Padding</span> &nbsp;|&nbsp; 🔵 <span style="color:#6090d8">Content</span><br>
+      <span style="color:#a09080">Notice: in <span style="color:#ff8855">content-box</span> the orange margin stays outside the orange dashes, but the rendered width GROWS when you add padding/border. In <span style="color:#55cc88">border-box</span> the rendered width stays fixed — content area shrinks instead.</span>
+    </div>
+  </div>
+
+  <!-- ===== INTERACTIVE LAB 2: Margin Collapse ===== -->
+  <div class="lab" style="margin-top:1.5rem;">
+    <div class="lab-title">Margin Collapse Visualizer</div>
+    <div class="shared-sliders">
+      <div class="shared-title">Adjust margins of the two boxes</div>
+      <div class="slider-row">
+        <span class="slider-label m">Box A ↓</span>
+        <input type="range" class="m" id="mc-a" min="0" max="80" value="40">
+        <span class="slider-val" id="mcv-a">40</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#f5a050">px</span>
+      </div>
+      <div class="slider-row">
+        <span class="slider-label m">Box B ↑</span>
+        <input type="range" class="m" id="mc-b" min="0" max="80" value="20">
+        <span class="slider-val" id="mcv-b">20</span><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:#f5a050">px</span>
+      </div>
+    </div>
+    <div class="canvas-wrap" style="height:240px; background:#13110f; border-radius:8px; border:1px solid #2a2620;">
+      <canvas class="box-canvas" id="canvas-mc"></canvas>
+    </div>
+    <div style="margin-top:0.8rem; font-family:'DM Mono',monospace; font-size:0.65rem; color:#a09080; padding:0.6rem 0.8rem; background:#1a1714; border-radius:6px;" id="mc-desc">—</div>
+  </div>
+
 </section>
 
 <!-- ===== CHAPTER 3: DISPLAY ===== -->
@@ -726,6 +1059,25 @@
   <span class="prop">padding</span>: <span class="val">2px 8px</span>;
   <span class="cm">/* Now width/height work, but it still sits in text flow */</span>
 }</code></pre>
+
+  <!-- ===== INTERACTIVE DISPLAY PLAYGROUND ===== -->
+  <div class="display-lab">
+    <div class="lab-title">Display Type Playground — Click a value to see how children behave</div>
+    <div class="display-buttons" id="dispBtns">
+      <button class="disp-btn active" data-val="block">block</button>
+      <button class="disp-btn" data-val="inline">inline</button>
+      <button class="disp-btn" data-val="inline-block">inline-block</button>
+      <button class="disp-btn" data-val="flex">flex</button>
+      <button class="disp-btn" data-val="grid">grid</button>
+      <button class="disp-btn" data-val="none">none</button>
+      <button class="disp-btn" data-val="contents">contents</button>
+    </div>
+    <div class="display-arena" id="displayArena">
+      <span class="arena-label">parent container</span>
+      <!-- children injected by JS -->
+    </div>
+    <div class="display-desc" id="displayDesc">—</div>
+  </div>
 
   <h3>none vs contents <span class="tag tag-inter">Intermediate</span></h3>
   <pre><code><span class="prop">display</span>: <span class="val">none</span>;     <span class="cm">/* Element AND children disappear from layout entirely */</span>
@@ -981,6 +1333,428 @@
 </main>
 
 <script>
+/* ================================================================
+   INTERACTIVE PLAYGROUND 1 — content-box vs border-box canvas
+================================================================ */
+const cbCanvas = document.getElementById('canvas-cb');
+const bbCanvas = document.getElementById('canvas-bb');
+const ctxCB = cbCanvas.getContext('2d');
+const ctxBB = bbCanvas.getContext('2d');
+
+function resizeCanvas(canvas) {
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+}
+
+function drawBox(ctx, canvas, mode, W, P, B, M, highlight) {
+  const dpr = window.devicePixelRatio;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const cw = canvas.width / dpr;
+  const ch = canvas.height / dpr;
+  ctx.scale(dpr, dpr);
+
+  // Scale factor so the box always fits nicely
+  const renderedW = mode === 'content-box' ? W + P*2 + B*2 : W;
+  const contentW  = mode === 'content-box' ? W : Math.max(4, W - P*2 - B*2);
+  const totalW    = renderedW + M*2;
+  const scale     = Math.min(1.6, (cw - 20) / totalW);
+
+  const sW  = W * scale;
+  const sP  = P * scale;
+  const sB  = B * scale;
+  const sM  = M * scale;
+  const sRW = renderedW * scale;
+  const sCW = contentW * scale;
+  const sTW = totalW * scale;
+
+  const cx = cw / 2;
+  const cy = ch / 2;
+  const boxH  = 56 * Math.min(1, scale * 1.2);
+  const paddH = boxH * 0.55;
+  const contH = boxH * 0.3;
+
+  // Draw margin zone
+  ctx.fillStyle = 'rgba(245,160,80,0.15)';
+  ctx.strokeStyle = '#f5a050';
+  ctx.setLineDash([4, 3]);
+  ctx.lineWidth = 1.5;
+  const mLeft = cx - sTW/2;
+  ctx.fillRect(mLeft, cy - boxH/2 - sM, sTW, boxH + sM*2);
+  ctx.strokeRect(mLeft, cy - boxH/2 - sM, sTW, boxH + sM*2);
+  ctx.setLineDash([]);
+
+  // Draw border
+  const bLeft = cx - sRW/2;
+  ctx.fillStyle = '#5a4a38';
+  ctx.fillRect(bLeft, cy - boxH/2, sRW, boxH);
+
+  // Draw padding zone
+  if (sP > 0) {
+    ctx.fillStyle = 'rgba(112,200,120,0.35)';
+    ctx.fillRect(bLeft + sB, cy - boxH/2 + sB, sRW - sB*2, boxH - sB*2);
+  }
+
+  // Draw content
+  ctx.fillStyle = '#2a50a0';
+  const contLeft = bLeft + sB + sP;
+  ctx.fillRect(contLeft, cy - contH/2, sCW, contH);
+  if (sCW > 18) {
+    ctx.fillStyle = '#aac8f8';
+    ctx.font = `${Math.min(10, sCW * 0.22)}px "DM Mono", monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText('content', contLeft + sCW/2, cy + 3);
+  }
+
+  // Labels
+  ctx.textAlign = 'left';
+  ctx.font = '9px "DM Mono", monospace';
+
+  // Margin label
+  if (sM > 6) {
+    ctx.fillStyle = '#f5a050';
+    ctx.fillText('margin', mLeft + 2, cy - boxH/2 - sM + 11);
+  }
+
+  // Padding label
+  if (sP > 8) {
+    ctx.fillStyle = '#70c878';
+    ctx.fillText('padding', bLeft + sB + 2, cy - boxH/2 + sB + 10);
+  }
+
+  // Width arrows
+  const arrowY = cy + boxH/2 + 12;
+  // declared width arrow (blue)
+  if (mode === 'content-box') {
+    drawArrow(ctx, contLeft, arrowY, contLeft + sCW, arrowY, '#6090d8');
+    ctx.fillStyle = '#6090d8'; ctx.textAlign = 'center'; ctx.font = '8.5px "DM Mono", monospace';
+    ctx.fillText(`declared ${W}px`, (contLeft*2 + sCW) / 2, arrowY + 10);
+  } else {
+    drawArrow(ctx, bLeft, arrowY, bLeft + sRW, arrowY, '#6090d8');
+    ctx.fillStyle = '#6090d8'; ctx.textAlign = 'center'; ctx.font = '8.5px "DM Mono", monospace';
+    ctx.fillText(`declared ${W}px`, bLeft + sRW/2, arrowY + 10);
+  }
+
+  // rendered width arrow (orange/green)
+  const arrowY2 = arrowY + 20;
+  const col = mode === 'content-box' ? '#ff8855' : '#55cc88';
+  drawArrow(ctx, bLeft, arrowY2, bLeft + sRW, arrowY2, col);
+  ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.font = '8.5px "DM Mono", monospace';
+  ctx.fillText(`rendered ${renderedW}px`, bLeft + sRW/2, arrowY2 + 10);
+
+  ctx.setTransform(1,0,0,1,0,0);
+}
+
+function drawArrow(ctx, x1, y, x2, y2, color) {
+  const ah = 4;
+  ctx.strokeStyle = color; ctx.fillStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y2); ctx.stroke();
+  // arrowheads
+  ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x1+ah, y-ah/2); ctx.lineTo(x1+ah, y+ah/2); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2-ah, y2-ah/2); ctx.lineTo(x2-ah, y2+ah/2); ctx.closePath(); ctx.fill();
+}
+
+function updateStats(el, mode, W, P, B, M) {
+  const rendered = mode === 'content-box' ? W + P*2 + B*2 : W;
+  const content  = mode === 'content-box' ? W : Math.max(0, W - P*2 - B*2);
+  const htmlCB = `declared: <span class="hl ${mode==='content-box'?'cb':'bb'}">${W}px</span> &nbsp;|&nbsp; content: <span class="hl ${mode==='content-box'?'cb':'bb'}">${content}px</span><br>rendered: <span class="hl ${mode==='content-box'?'cb':'bb'}">${rendered}px</span> (${W} + ${P}×2 padding + ${B}×2 border)`;
+  el.innerHTML = htmlCB;
+}
+
+function redrawBoxes() {
+  const W = +document.getElementById('s-width').value;
+  const P = +document.getElementById('s-padding').value;
+  const B = +document.getElementById('s-border').value;
+  const M = +document.getElementById('s-margin').value;
+
+  ['width','padding','border','margin'].forEach(k => {
+    document.getElementById('v-'+k).textContent = document.getElementById('s-'+k).value;
+  });
+
+  resizeCanvas(cbCanvas); resizeCanvas(bbCanvas);
+  drawBox(ctxCB, cbCanvas, 'content-box', W, P, B, M);
+  drawBox(ctxBB, bbCanvas, 'border-box',  W, P, B, M);
+  updateStats(document.getElementById('stats-cb'), 'content-box', W, P, B, M);
+  updateStats(document.getElementById('stats-bb'), 'border-box',  W, P, B, M);
+}
+
+['s-width','s-padding','s-border','s-margin'].forEach(id => {
+  document.getElementById(id).addEventListener('input', redrawBoxes);
+});
+window.addEventListener('resize', redrawBoxes);
+setTimeout(redrawBoxes, 80);
+
+/* ================================================================
+   INTERACTIVE PLAYGROUND 2 — Margin Collapse canvas
+================================================================ */
+const mcCanvas = document.getElementById('canvas-mc');
+const ctxMC = mcCanvas.getContext('2d');
+
+function redrawCollapse() {
+  const ma = +document.getElementById('mc-a').value;
+  const mb = +document.getElementById('mc-b').value;
+  document.getElementById('mcv-a').textContent = ma;
+  document.getElementById('mcv-b').textContent = mb;
+
+  resizeCanvas(mcCanvas);
+  const dpr = window.devicePixelRatio;
+  const cw = mcCanvas.width / dpr;
+  const ch = mcCanvas.height / dpr;
+  ctxMC.scale(dpr, dpr);
+  ctxMC.clearRect(0, 0, cw, ch);
+
+  const collapsed = Math.max(ma, mb);
+  const boxH = 42;
+  const boxW = cw * 0.55;
+  const bx = (cw - boxW) / 2;
+  const totalH = boxH + collapsed + boxH;
+  const scale = Math.min(1, (ch - 40) / totalH);
+  const sH = boxH * scale;
+  const sC = collapsed * scale;
+  const sMA = ma * scale;
+  const sMB = mb * scale;
+  const startY = (ch - totalH * scale) / 2;
+
+  // Box A
+  ctxMC.fillStyle = '#2a4a80';
+  ctxMC.fillRect(bx, startY, boxW, sH);
+  ctxMC.fillStyle = '#8ab0f0';
+  ctxMC.font = '11px "DM Mono", monospace'; ctxMC.textAlign = 'center';
+  ctxMC.fillText('Box A', bx + boxW/2, startY + sH/2 + 4);
+
+  // Margin A (bottom)
+  ctxMC.fillStyle = 'rgba(245,160,80,0.25)';
+  ctxMC.strokeStyle = '#f5a050'; ctxMC.setLineDash([3,2]); ctxMC.lineWidth = 1;
+  ctxMC.fillRect(bx, startY + sH, boxW, sMA);
+  ctxMC.strokeRect(bx, startY + sH, boxW, sMA);
+  if (sMA > 10) {
+    ctxMC.fillStyle = '#f5a050'; ctxMC.font = '9px "DM Mono",monospace'; ctxMC.textAlign = 'right';
+    ctxMC.fillText(`margin-bottom: ${ma}px`, bx - 4, startY + sH + sMA/2 + 3);
+  }
+
+  // Margin B (top)
+  ctxMC.fillStyle = 'rgba(200,100,80,0.2)';
+  ctxMC.strokeStyle = '#e87050'; ctxMC.setLineDash([3,2]);
+  ctxMC.fillRect(bx, startY + sH + sC - sMB, boxW, sMB);
+  ctxMC.strokeRect(bx, startY + sH + sC - sMB, boxW, sMB);
+  if (sMB > 10) {
+    ctxMC.fillStyle = '#e87050'; ctxMC.font = '9px "DM Mono",monospace'; ctxMC.textAlign = 'left';
+    ctxMC.fillText(`margin-top: ${mb}px`, bx + boxW + 4, startY + sH + sC - sMB/2 + 3);
+  }
+  ctxMC.setLineDash([]);
+
+  // Collapsed gap bracket
+  ctxMC.strokeStyle = '#ffffff33'; ctxMC.lineWidth = 1;
+  ctxMC.beginPath(); ctxMC.moveTo(bx + boxW + 10, startY + sH); ctxMC.lineTo(bx + boxW + 10, startY + sH + sC); ctxMC.stroke();
+  ctxMC.fillStyle = '#aaa'; ctxMC.font = '9px "DM Mono",monospace'; ctxMC.textAlign = 'left';
+  ctxMC.fillText(`actual gap = ${collapsed}px`, bx + boxW + 16, startY + sH + sC/2 + 3);
+
+  // Box B
+  ctxMC.fillStyle = '#2a6040';
+  ctxMC.fillRect(bx, startY + sH + sC, boxW, sH);
+  ctxMC.fillStyle = '#7ae0a8';
+  ctxMC.font = '11px "DM Mono", monospace'; ctxMC.textAlign = 'center';
+  ctxMC.fillText('Box B', bx + boxW/2, startY + sH + sC + sH/2 + 4);
+
+  ctxMC.setTransform(1,0,0,1,0,0);
+
+  const desc = document.getElementById('mc-desc');
+  if (ma === mb) {
+    desc.innerHTML = `Both margins are <strong style="color:#f5a050">${ma}px</strong>. They collapse — gap = <strong style="color:#55cc88">${collapsed}px</strong> (equal, so either wins). Not ${ma + mb}px!`;
+  } else {
+    const winner = ma > mb ? 'A\'s margin-bottom' : 'B\'s margin-top';
+    desc.innerHTML = `margin-bottom (A): <strong style="color:#f5a050">${ma}px</strong> &nbsp;+&nbsp; margin-top (B): <strong style="color:#e87050">${mb}px</strong><br>They collapse → actual gap = <strong style="color:#55cc88">${collapsed}px</strong> (the larger wins — ${winner} dominates)`;
+  }
+}
+
+document.getElementById('mc-a').addEventListener('input', redrawCollapse);
+document.getElementById('mc-b').addEventListener('input', redrawCollapse);
+setTimeout(redrawCollapse, 120);
+
+/* ================================================================
+   INTERACTIVE PLAYGROUND 3 — Display Type Visualizer
+================================================================ */
+const DISPLAY_DATA = {
+  block: {
+    desc: '<strong>display: block</strong> — Each child takes the full available width and stacks vertically. width, height, margin, padding all work. Default for div, p, h1–h6.',
+    render: (arena) => {
+      arena.style.display = 'block';
+      const colors = ['#3a5080','#3a7050','#703a50'];
+      ['Child 1','Child 2','Child 3'].forEach((t, i) => {
+        const d = document.createElement('div');
+        d.className = 'arena-child';
+        d.style.background = colors[i]+'44';
+        d.style.borderColor = colors[i]+'99';
+        d.style.display = 'block';
+        d.style.marginBottom = '6px';
+        d.textContent = t + ' (width: 100%)';
+        arena.appendChild(d);
+      });
+    }
+  },
+  inline: {
+    desc: '<strong>display: inline</strong> — Children flow like words in a sentence. width & height are IGNORED. top/bottom margins ignored. Wraps when it runs out of space.',
+    render: (arena) => {
+      arena.style.display = 'block';
+      const colors = ['#3a5080','#3a7050','#703a50','#705030','#2a6060'];
+      ['Hello','World','I','am','inline','elements','flowing'].forEach((t, i) => {
+        const d = document.createElement('span');
+        d.className = 'arena-child';
+        d.style.display = 'inline';
+        d.style.background = colors[i%5]+'55';
+        d.style.borderColor = colors[i%5]+'aa';
+        d.style.margin = '2px';
+        d.textContent = t;
+        arena.appendChild(d);
+      });
+      const note = document.createElement('div');
+      note.style.fontFamily = "'DM Mono', monospace"; note.style.fontSize='0.62rem';
+      note.style.color='#7a6a58'; note.style.marginTop='8px';
+      note.textContent = '↑ width/height CSS has no effect on these elements';
+      arena.appendChild(note);
+    }
+  },
+  'inline-block': {
+    desc: '<strong>display: inline-block</strong> — Flows inline with text BUT respects width, height, and all margins. Each child sits side-by-side while having block sizing control.',
+    render: (arena) => {
+      arena.style.display = 'block';
+      const colors = ['#3a5080','#3a7050','#703a50'];
+      ['Chip A','Chip B','Chip C'].forEach((t, i) => {
+        const d = document.createElement('div');
+        d.className = 'arena-child';
+        d.style.display = 'inline-block';
+        d.style.width = (60 + i*20)+'px';
+        d.style.height = '50px';
+        d.style.verticalAlign = 'middle';
+        d.style.margin = '4px';
+        d.style.background = colors[i]+'55';
+        d.style.borderColor = colors[i]+'aa';
+        d.style.fontSize = '0.62rem';
+        d.innerHTML = t + `<br><span style="color:#7a9070;font-size:0.55rem">w:${60+i*20}px h:50px</span>`;
+        arena.appendChild(d);
+      });
+    }
+  },
+  flex: {
+    desc: '<strong>display: flex</strong> — Children become flex items. They line up in a row (by default), stretch to equal height, and you can align/justify them precisely. All children are blockified.',
+    render: (arena) => {
+      arena.style.display = 'flex';
+      arena.style.gap = '8px';
+      arena.style.alignItems = 'stretch';
+      const colors = ['#3a5080','#3a7050','#703a50','#705030'];
+      ['Flex Item 1','Flex Item 2 (taller content here)','Item 3'].forEach((t, i) => {
+        const d = document.createElement('div');
+        d.className = 'arena-child';
+        d.style.flex = '1';
+        d.style.background = colors[i]+'44';
+        d.style.borderColor = colors[i]+'99';
+        d.textContent = t;
+        arena.appendChild(d);
+      });
+      const note = document.createElement('div');
+      note.style.cssText = 'font-family:"DM Mono",monospace;font-size:0.6rem;color:#7a6a58;width:100%;margin-top:4px;';
+      note.textContent = '↑ all children stretch to same height automatically';
+      arena.appendChild(note);
+    }
+  },
+  grid: {
+    desc: '<strong>display: grid</strong> — Children are placed into a grid of rows and columns. Gives precise 2D control. Children span cells defined by the grid template.',
+    render: (arena) => {
+      arena.style.display = 'grid';
+      arena.style.gridTemplateColumns = 'repeat(3,1fr)';
+      arena.style.gap = '6px';
+      const colors = ['#3a5080','#3a7050','#703a50','#705030','#2a6060','#604040'];
+      for(let i=0;i<6;i++){
+        const d = document.createElement('div');
+        d.className = 'arena-child';
+        d.style.background = colors[i]+'44';
+        d.style.borderColor = colors[i]+'99';
+        d.style.textAlign = 'center';
+        d.style.fontSize = '0.65rem';
+        d.textContent = `Cell ${i+1}`;
+        arena.appendChild(d);
+      }
+    }
+  },
+  none: {
+    desc: '<strong>display: none</strong> — The element and ALL its children are removed from layout entirely. No box is generated. No space is reserved. Invisible to accessibility tools too.',
+    render: (arena) => {
+      arena.style.display = 'block';
+      const before = document.createElement('div');
+      before.className = 'arena-child';
+      before.style.background = '#3a508044'; before.style.borderColor = '#3a508099';
+      before.textContent = 'Visible element (before)';
+      arena.appendChild(before);
+
+      const hidden = document.createElement('div');
+      hidden.className = 'arena-child';
+      hidden.style.display = 'none';
+      hidden.textContent = 'I am display:none — totally gone';
+      arena.appendChild(hidden);
+
+      const ghost = document.createElement('div');
+      ghost.style.cssText = 'font-family:"DM Mono",monospace;font-size:0.65rem;color:#5a4a38;border:1.5px dashed #3a3028;padding:8px 14px;border-radius:3px;text-align:center;margin:6px 0;';
+      ghost.textContent = '← no box here at all (display:none element)';
+      arena.appendChild(ghost);
+
+      const after = document.createElement('div');
+      after.className = 'arena-child';
+      after.style.background = '#3a705044'; after.style.borderColor = '#3a705099';
+      after.textContent = 'Visible element (after) — no gap above';
+      arena.appendChild(after);
+    }
+  },
+  contents: {
+    desc: '<strong>display: contents</strong> — The WRAPPER\'s own box disappears, but its children remain in layout as if the wrapper never existed. Useful for semantic HTML wrappers that shouldn\'t affect visual layout.',
+    render: (arena) => {
+      arena.style.display = 'block';
+      const label = document.createElement('div');
+      label.style.cssText='font-family:"DM Mono",monospace;font-size:0.6rem;color:#7a6a58;margin-bottom:6px;';
+      label.textContent = 'Outer wrapper has display:contents — its border/padding vanish:';
+      arena.appendChild(label);
+
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'display:contents; border:3px solid red; padding:20px; background:red;';
+      ['Child A (sees no wrapper box)','Child B','Child C'].forEach((t, i) => {
+        const d = document.createElement('div');
+        d.className = 'arena-child';
+        d.style.cssText = 'display:block;margin:4px 0;background:#3a508044;border-color:#3a508099;';
+        d.textContent = t;
+        wrapper.appendChild(d);
+      });
+      arena.appendChild(wrapper);
+
+      const note = document.createElement('div');
+      note.style.cssText='font-family:"DM Mono",monospace;font-size:0.6rem;color:#f5a05088;margin-top:6px;';
+      note.textContent = '↑ the wrapper\'s red border+padding are invisible — only children render';
+      arena.appendChild(note);
+    }
+  }
+};
+
+let activeDisplay = 'block';
+function setDisplay(val) {
+  activeDisplay = val;
+  document.querySelectorAll('.disp-btn').forEach(b => b.classList.toggle('active', b.dataset.val === val));
+  const arena = document.getElementById('displayArena');
+  arena.innerHTML = '<span class="arena-label">parent container</span>';
+  // reset styles
+  arena.style.display = '';
+  arena.style.gap = '';
+  arena.style.alignItems = '';
+  arena.style.gridTemplateColumns = '';
+  DISPLAY_DATA[val].render(arena);
+  document.getElementById('displayDesc').innerHTML = DISPLAY_DATA[val].desc;
+}
+
+document.getElementById('dispBtns').addEventListener('click', e => {
+  if(e.target.dataset.val) setDisplay(e.target.dataset.val);
+});
+setTimeout(() => setDisplay('block'), 150);
+
+/* ================================================================
+   FLASHCARDS
+================================================================ */
 const ALL_CARDS = [
   // Box Model
   { cat: "box-model", catLabel: "BOX MODEL",
